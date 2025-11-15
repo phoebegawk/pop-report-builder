@@ -25,32 +25,54 @@ st.markdown(
     /* Remove default Streamlit menu & footer */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: visible;}
 
-    /* Streamlit writes many elements using attribute selectors */
+    /* Remove Streamlit top warning/toolbar (the white bar you saw) */
+    [data-testid="stNotification"], 
+    .stNotification, 
+    .stAlert, 
+    .stToolbar {
+        display: none !important;
+    }
+
+    /* Default text stays WHITE */
     * {
         color: #FFFFFF !important;
     }
 
-    /* Override Streamlit uploader hint text */
+    /* ---------------------- */
+    /* FILE UPLOADER — GAWK PURPLE */
+    /* ---------------------- */
+
+    /* Text inside the uploader (title, subtitle, help text) */
     div[data-testid="stFileUploader"] * {
-        color: #FFFFFF !important;
+        color: #542D54 !important;
     }
 
-    /* Table text (dataframe/table elements) */
+    /* The little upload icon */
+    div[data-testid="stFileUploader"] svg {
+        fill: #542D54 !important;
+    }
+
+    /* Upload button text */
+    div[data-testid="stFileUploader"] button {
+        color: #542D54 !important;
+        font-weight: 700 !important;
+        font-family: "Montserrat", sans-serif !important;
+    }
+
+    /* ---------------------- */
+    /* TABLE + STATUS TEXT — WHITE */
+    /* ---------------------- */
+
     div[data-testid="stDataFrame"] *, 
     .stDataFrame *, 
     .stTable * {
         color: #FFFFFF !important;
     }
 
-    /* Pagination text ("Showing page 1 of X") */
-    .st-emotion-cache-1y4p8pa, .st-emotion-cache-1m8g1qv, div[data-testid="stDataFrame"] p {
-        color: #FFFFFF !important;
-    }
-
-    /* Status text (like “Done!”, errors, warnings) */
-    .stAlert, .stToast, [data-testid="stNotification"], [data-testid="stNotificationContent"], .st-emotion-cache-1wdo8hj {
+    .st-emotion-cache-1y4p8pa, 
+    .st-emotion-cache-1m8g1qv, 
+    div[data-testid="stDataFrame"] p {
         color: #FFFFFF !important;
     }
 
@@ -75,14 +97,14 @@ st.markdown(
         opacity: 0.5 !important;
     }
 
-    /* Page padding */
+    /* Page content box spacing */
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
         max-width: 1100px !important;
     }
 
-    /* Title and subtitle */
+    /* Title + Subtitle */
     .pop-title {
         font-size: 1.4rem;
         font-weight: 700;
@@ -96,7 +118,7 @@ st.markdown(
         color: #FFFFFF !important;
     }
 
-    /* File uploader border rounding */
+    /* File uploader box rounding */
     .st-emotion-cache-9j8j93, .st-emotion-cache-1vbkxwb {
         border-radius: 12px !important;
     }
