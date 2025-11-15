@@ -163,7 +163,6 @@ st.markdown(
 )
 
 uploaded_files = st.file_uploader(
-    "Drag and drop or browse",
     type=["jpg", "jpeg", "png"],
     accept_multiple_files=True,
 )
