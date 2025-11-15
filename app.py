@@ -7,60 +7,51 @@ st.set_page_config(page_title="PoP Report Builder", layout="wide")
 HEADER_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/main/assets/Header-PoPReportBuilder.png"
 
 # Header
-st.image(HEADER_URL, use_container_width=True)
+st.image(HEADER_URL, width="stretch")
 
+# --------------------------------------------------------------
+# STYLE BLOCK (ALL VISUAL LOGIC)
+# --------------------------------------------------------------
 st.markdown(
     """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    /* -------------------------------------------------------------- */
-    /* GLOBAL BACKGROUND + FONT                                       */
-    /* -------------------------------------------------------------- */
+    /* GLOBAL BACKGROUND + FONT */
     html, body, .stApp, .stAppViewContainer, .main {
-        background-color: #542D54 !important;   /* Gawk Purple */
-        color: #FFFFFF !important;              /* Global white text */
+        background-color: #542D54 !important;
+        color: #FFFFFF !important;
         font-family: "Montserrat", sans-serif !important;
     }
 
     #MainMenu, footer { visibility: hidden !important; }
     [data-testid="stNotification"], .stAlert, .stToolbar { display: none !important; }
 
-    /* -------------------------------------------------------------- */
-    /* TOP STREAMLIT HEADER BAR                                       */
-    /* -------------------------------------------------------------- */
+    /* TOP STREAMLIT HEADER BAR */
     header[data-testid="stHeader"],
     header[data-testid="stHeader"] * {
         background-color: #542D54 !important;
         color: #FFFFFF !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* HIDE FILE UPLOADER LABEL (must exist in Python)                */
-    /* -------------------------------------------------------------- */
+    /* HIDE FILE UPLOADER LABEL (BUT KEEP IT IN PYTHON) */
     div[data-testid="stFileUploader"] label {
         display: none !important;
         visibility: hidden !important;
-        margin: 0 !important;
-        padding: 0 !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* FILE UPLOADER DROPZONE — PURE GAWK PURPLE                      */
-    /* -------------------------------------------------------------- */
-
-    /* All text inside dropzone → purple */
+    /* FILE UPLOADER DROPZONE — GAWK PURPLE TEXT */
     div[data-testid="stFileUploaderDropzone"] * {
         color: #542D54 !important;
+        fill: #542D54 !important;
         opacity: 1 !important;
     }
 
-    /* Cloud icon */
     div[data-testid="stFileUploaderDropzone"] svg {
         fill: #542D54 !important;
     }
 
-    /* Browse files button */
+    /* Browse Files button */
     div[data-testid="stFileUploader"] button {
         background-color: #FFFFFF !important;
         color: #542D54 !important;
@@ -68,11 +59,7 @@ st.markdown(
         border-radius: 8px !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* REMOVE FILE LIST, CHIPS, DELETE BUTTONS, PAGINATION            */
-    /* -------------------------------------------------------------- */
-
-    /* All uploaded-file UI elements */
+    /* REMOVE FILE LIST / CHIPS / DELETE / PAGINATION */
     div[data-testid="stFileUploaderUploadedFiles"],
     div[data-testid="stFileUploaderFile"],
     ul[role="listbox"],
@@ -84,37 +71,31 @@ st.markdown(
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
+        overflow: hidden !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow: hidden !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* TABLE STYLING                                                  */
-    /* -------------------------------------------------------------- */
+    /* TABLE STYLING */
     div[data-testid="stDataFrame"] td,
     div[data-testid="stDataFrame"] th {
         font-size: 0.85rem !important;
         white-space: nowrap !important;
         text-overflow: ellipsis !important;
     }
-
     div[data-testid="stDataFrame"] {
         overflow-x: auto !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* BUTTONS (Gawk Green + Purple Text)                             */
-    /* -------------------------------------------------------------- */
+    /* BUTTON STYLING (Gawk Green + Purple Text) */
     .stButton > button,
     .stDownloadButton > button {
-        background-color: #D7DF23 !important; /* Gawk Green */
-        color: #542D54 !important;            /* Purple text */
+        background-color: #D7DF23 !important;
+        color: #542D54 !important;
         border-radius: 999px !important;
         padding: 0.55rem 1.6rem !important;
         border: none !important;
         font-weight: 700 !important;
-        font-family: "Montserrat", sans-serif !important;
     }
 
     .stButton > button:hover,
@@ -123,9 +104,7 @@ st.markdown(
         color: #542D54 !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* PAGE WIDTH + HEADINGS                                          */
-    /* -------------------------------------------------------------- */
+    /* PAGE WIDTH */
     .block-container {
         max-width: 1500px !important;
         padding-top: 1rem !important;
@@ -136,22 +115,31 @@ st.markdown(
         text-align: center !important;
         color: #FFFFFF !important;
     }
-
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+# --------------------------------------------------------------
+# TITLE
+# --------------------------------------------------------------
 st.markdown(
     '<div class="pop-title">Image file naming must follow = Site Name - Site Code - Client - Campaign - DDMMYY - Type.ext</div>',
     unsafe_allow_html=True,
 )
 
+# --------------------------------------------------------------
+# FILE UPLOADER (label required to avoid TypeError)
+# --------------------------------------------------------------
 uploaded_files = st.file_uploader(
+    "upload",                        # required but hidden via CSS
     type=["jpg", "jpeg", "png"],
     accept_multiple_files=True,
 )
 
+# --------------------------------------------------------------
+# FILE PARSING + TABLE
+# --------------------------------------------------------------
 valid_files = []
 file_rows = []
 
@@ -178,6 +166,9 @@ if uploaded_files:
 if file_rows:
     st.table(file_rows)
 
+# --------------------------------------------------------------
+# GENERATE PRESENTATION
+# --------------------------------------------------------------
 generate_disabled = not valid_files
 generate = st.button("Generate PoP Report", disabled=generate_disabled)
 
@@ -191,6 +182,9 @@ if generate and valid_files:
     except Exception as e:
         st.error(f"Something went wrong while building the report: {e}")
 
+# --------------------------------------------------------------
+# DOWNLOAD BUTTON
+# --------------------------------------------------------------
 if pptx_bytes is not None:
     st.download_button(
         "Download PoP Report",
