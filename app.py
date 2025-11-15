@@ -14,6 +14,9 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
+    /* -------------------------------------------------------------- */
+    /* GLOBAL BACKGROUND + FONT                                       */
+    /* -------------------------------------------------------------- */
     html, body, .stApp, .stAppViewContainer, .main {
         background-color: #542D54 !important;
         color: #FFFFFF !important;
@@ -29,32 +32,51 @@ st.markdown(
 
     * { color: #FFFFFF !important; }
 
-    /* ------------------------------ */
-    /* DROPZONE TEXT = GAWK PURPLE    */
-    /* ------------------------------ */
-
-    div[data-testid="stFileUploaderDropzone"] *,
-    div[data-testid="stFileUploaderDropzone"] label,
-    div[data-testid="stFileUploaderDropzone"] p,
-    div[data-testid="stFileUploaderDropzone"] span {
-        color: #542D54 !important;
+    /* -------------------------------------------------------------- */
+    /*  FIX — TOP STREAMLIT HEADER BAR BACK TO GAWK PURPLE            */
+    /* -------------------------------------------------------------- */
+    header[data-testid="stHeader"] {
+        background-color: #542D54 !important;
     }
 
+    /* Dynamic internal container inside header */
+    header[data-testid="stHeader"] div {
+        background-color: #542D54 !important;
+    }
+
+    /* Removes any residual gradient behind menu */
+    .st-emotion-cache-18ni7ap,
+    .st-emotion-cache-1gulkj5,
+    .st-emotion-cache-q8sbsg {
+        background-color: #542D54 !important;
+    }
+
+    /* -------------------------------------------------------------- */
+    /* FILE UPLOADER DROPZONE — MAKE TEXT + ICON PURE GAWK PURPLE     */
+    /* -------------------------------------------------------------- */
+
+    /* Override every descendant of the dropzone EXCEPT buttons */
+    div[data-testid="stFileUploaderDropzone"] *:not(button) {
+        color: #542D54 !important;
+        opacity: 1 !important;
+    }
+
+    /* Cloud icon */
     div[data-testid="stFileUploaderDropzone"] svg {
         fill: #542D54 !important;
     }
 
+    /* Browse Files button */
     div[data-testid="stFileUploader"] button {
         background-color: #FFFFFF !important;
         color: #542D54 !important;
         font-weight: 700 !important;
         border-radius: 8px !important;
-        font-family: "Montserrat", sans-serif !important;
     }
 
-    /* ------------------------------------------- */
-    /*  🔥 REMOVE FILE LIST BELOW UPLOADER (WORKS!) */
-    /* ------------------------------------------- */
+    /* -------------------------------------------------------------- */
+    /* REMOVE FILE LIST BELOW UPLOADER COMPLETELY                     */
+    /* -------------------------------------------------------------- */
 
     div[data-testid="stFileUploaderUploadedFiles"] {
         display: none !important;
@@ -65,15 +87,13 @@ st.markdown(
         overflow: hidden !important;
     }
 
-    /* Extra fallback */
     div[data-testid="stFileUploaderFile"] {
         display: none !important;
     }
 
-    /* ------------------------------------------- */
-    /* TABLE STYLING                               */
-    /* ------------------------------------------- */
-
+    /* -------------------------------------------------------------- */
+    /* TABLE STYLING                                                  */
+    /* -------------------------------------------------------------- */
     div[data-testid="stDataFrame"] td,
     div[data-testid="stDataFrame"] th {
         font-size: 0.85rem !important;
@@ -85,9 +105,9 @@ st.markdown(
         overflow-x: auto !important;
     }
 
-    /* ------------------------------------------- */
-    /* BUTTONS                                     */
-    /* ------------------------------------------- */
+    /* -------------------------------------------------------------- */
+    /* BUTTONS (GREEN WITH PURPLE TEXT — BRAND SAFE)                  */
+    /* -------------------------------------------------------------- */
 
     .stButton > button,
     .stDownloadButton > button {
@@ -105,6 +125,10 @@ st.markdown(
         background-color: #C8D51E !important;
         color: #542D54 !important;
     }
+
+    /* -------------------------------------------------------------- */
+    /* PAGE WIDTH + HEADINGS                                          */
+    /* -------------------------------------------------------------- */
 
     .block-container {
         max-width: 1500px !important;
