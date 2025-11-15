@@ -36,23 +36,26 @@ st.markdown(
     }
 
     /* ------------------------------------------------------------- */
-    /* FIX 1 — FILE UPLOADER DROPZONE ONLY (GAWK PURPLE TEXT + ICON) */
+    /* FILE UPLOADER DROPZONE (THE BOX) — MAKE TEXT PURPLE AGAIN     */
     /* ------------------------------------------------------------- */
 
-    .stApp div[data-testid="stFileUploaderDropzone"],
-    .stApp div[data-testid="stFileUploaderDropzone"] *,
-    .stApp div[data-testid="stFileUploaderDropzone"] p,
-    .stApp div[data-testid="stFileUploaderDropzone"] span,
-    .stApp div[data-testid="stFileUploaderDropzone"] label {
+    /* Target the exact nested container Streamlit now uses */
+    div[data-testid="stFileUploaderDropzone"] * {
         color: #542D54 !important;
         opacity: 1 !important;
     }
 
-    .stApp div[data-testid="stFileUploaderDropzone"] svg {
+    /* Even deeper override (Streamlit wraps text twice now) */
+    div[data-testid="stFileUploaderDropzone"] div div * {
+        color: #542D54 !important;
+    }
+
+    /* Cloud icon */
+    div[data-testid="stFileUploaderDropzone"] svg {
         fill: #542D54 !important;
     }
 
-    /* Browse Files button */
+    /* “Browse files” button */
     div[data-testid="stFileUploader"] button {
         color: #542D54 !important;
         background-color: #FFFFFF !important;
@@ -62,10 +65,9 @@ st.markdown(
     }
 
     /* ------------------------------------------------------------- */
-    /* FIX 2 — REMOVE FILE LIST BELOW THE UPLOADER COMPLETELY        */
+    /* REMOVE FILE-LIST BELOW UPLOADER COMPLETELY                    */
     /* ------------------------------------------------------------- */
 
-    /* Hide file-name list, chips, delete buttons — EVERYTHING */
     div[data-testid="stFileUploaderDropzone"] + div {
         display: none !important;
         visibility: hidden !important;
