@@ -25,26 +25,18 @@ st.markdown(
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-
-    [data-testid="stNotification"], .stNotification, .stAlert, .stToolbar {
+    [data-testid="stNotification"], .stAlert, .stToolbar {
         display: none !important;
     }
 
+    /* Global text white — allowed, but we override uploader later */
     * { color: #FFFFFF !important; }
 
     /* -------------------------------------------------------------- */
-    /*  FIX — TOP STREAMLIT HEADER BAR BACK TO GAWK PURPLE            */
+    /* TOP STREAMLIT HEADER BAR                                       */
     /* -------------------------------------------------------------- */
-    header[data-testid="stHeader"] {
-        background-color: #542D54 !important;
-    }
-
-    /* Dynamic internal container inside header */
-    header[data-testid="stHeader"] div {
-        background-color: #542D54 !important;
-    }
-
-    /* Removes any residual gradient behind menu */
+    header[data-testid="stHeader"],
+    header[data-testid="stHeader"] div,
     .st-emotion-cache-18ni7ap,
     .st-emotion-cache-1gulkj5,
     .st-emotion-cache-q8sbsg {
@@ -52,12 +44,13 @@ st.markdown(
     }
 
     /* -------------------------------------------------------------- */
-    /* FILE UPLOADER DROPZONE — MAKE TEXT + ICON PURE GAWK PURPLE     */
+    /* FILE UPLOADER DROPZONE — FORCE PURPLE TEXT (STRONG OVERRIDE)   */
     /* -------------------------------------------------------------- */
 
-    /* Override every descendant of the dropzone EXCEPT buttons */
+    /* Make EVERYTHING inside dropzone purple unless it's a button */
     div[data-testid="stFileUploaderDropzone"] *:not(button) {
         color: #542D54 !important;
+        fill: #542D54 !important;
         opacity: 1 !important;
     }
 
@@ -66,7 +59,7 @@ st.markdown(
         fill: #542D54 !important;
     }
 
-    /* Browse Files button */
+    /* Browse button */
     div[data-testid="stFileUploader"] button {
         background-color: #FFFFFF !important;
         color: #542D54 !important;
@@ -75,20 +68,39 @@ st.markdown(
     }
 
     /* -------------------------------------------------------------- */
-    /* REMOVE FILE LIST BELOW UPLOADER COMPLETELY                     */
+    /* REMOVE FILE LIST BELOW UPLOADER                               */
     /* -------------------------------------------------------------- */
 
-    div[data-testid="stFileUploaderUploadedFiles"] {
+    div[data-testid="stFileUploaderUploadedFiles"],
+    div[data-testid="stFileUploaderFile"],
+    ul[role="listbox"],
+    li[role="option"] {
         display: none !important;
-        visibility: hidden !important;
         height: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
         overflow: hidden !important;
     }
 
-    div[data-testid="stFileUploaderFile"] {
+    /* -------------------------------------------------------------- */
+    /* REMOVE PAGINATION (“Showing page 1 of 2” + arrows)             */
+    /* -------------------------------------------------------------- */
+
+    /* All known paginator containers */
+    div[data-testid="stPagination"],
+    div[data-testid="stPaginator"],
+    div[aria-label="Pagination"],
+    div[class*="pagination"],
+    div:has(> button[aria-label="Next"]),
+    div:has(> button[aria-label="Previous"]),
+    div:has(> button[aria-label="Next Page"]),
+    div:has(> button[aria-label="Previous Page"]) {
         display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
     }
 
     /* -------------------------------------------------------------- */
@@ -106,9 +118,8 @@ st.markdown(
     }
 
     /* -------------------------------------------------------------- */
-    /* BUTTONS (GREEN WITH PURPLE TEXT — BRAND SAFE)                  */
+    /* BUTTONS                                                        */
     /* -------------------------------------------------------------- */
-
     .stButton > button,
     .stDownloadButton > button {
         background-color: #D7DF23 !important;
@@ -129,7 +140,6 @@ st.markdown(
     /* -------------------------------------------------------------- */
     /* PAGE WIDTH + HEADINGS                                          */
     /* -------------------------------------------------------------- */
-
     .block-container {
         max-width: 1500px !important;
         padding-top: 1rem !important;
