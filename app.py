@@ -14,56 +14,38 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    /* -------------------------------------------------------------- */
-    /* GLOBAL BACKGROUND + FONT                                       */
-    /* -------------------------------------------------------------- */
+    /* GLOBAL BACKGROUND + FONT */
     html, body, .stApp, .stAppViewContainer, .main {
-        background-color: #542D54 !important;   /* Gawk Purple */
-        color: #FFFFFF !important;              /* Default text white */
+        background-color: #542D54 !important;
+        color: #FFFFFF !important;
         font-family: "Montserrat", sans-serif !important;
     }
 
-    #MainMenu, footer {
-        visibility: hidden !important;
-    }
+    #MainMenu, footer { visibility: hidden !important; }
+    [data-testid="stNotification"], .stAlert, .stToolbar { display: none !important; }
 
-    [data-testid="stNotification"],
-    .stAlert,
-    .stToolbar {
-        display: none !important;
-    }
-
-    /* -------------------------------------------------------------- */
-    /* TOP STREAMLIT HEADER BAR                                       */
-    /* -------------------------------------------------------------- */
-    header[data-testid="stHeader"],
-    header[data-testid="stHeader"] * {
+    /* HEADER BAR */
+    header[data-testid="stHeader"], header[data-testid="stHeader"] * {
         background-color: #542D54 !important;
         color: #FFFFFF !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* HIDE FILE UPLOADER LABEL (but label must exist in Python)      */
-    /* -------------------------------------------------------------- */
+    /* HIDE FILE UPLOADER LABEL */
     div[data-testid="stFileUploader"] label {
         display: none !important;
         visibility: hidden !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* FILE UPLOADER DROPZONE — PURE GAWK PURPLE TEXT                 */
-    /* -------------------------------------------------------------- */
+    /* FILE UPLOADER DROPZONE — PURPLE TEXT */
     div[data-testid="stFileUploaderDropzone"] * {
         color: #542D54 !important;
         fill: #542D54 !important;
-        opacity: 1 !important;
     }
-
     div[data-testid="stFileUploaderDropzone"] svg {
         fill: #542D54 !important;
     }
 
-    /* Browse button */
+    /* Browse Files button */
     div[data-testid="stFileUploader"] button {
         background-color: #FFFFFF !important;
         color: #542D54 !important;
@@ -71,17 +53,28 @@ st.markdown(
         border-radius: 8px !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* REMOVE FILE LIST / CHIPS / DELETE BUTTONS / PAGINATION         */
-    /* -------------------------------------------------------------- */
+    /* REMOVE FILE LIST / CHIPS */
     div[data-testid="stFileUploaderUploadedFiles"],
     div[data-testid="stFileUploaderFile"],
     ul[role="listbox"],
-    li[role="option"],
-    div[data-testid="stPagination"],
+    li[role="option"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+
+    /* REMOVE PAGINATION (ALL STREAMLIT VERSIONS) */
+    div[data-testid="stDataFramePaginator"],
     div[data-testid="stPaginator"],
+    div[data-testid="stPagination"],
     div[aria-label="Pagination"],
-    div[class*="pagination"] {
+    div:has(> button[aria-label="Next"]),
+    div:has(> button[aria-label="Previous"]),
+    button[aria-label="Next"],
+    button[aria-label="Previous"] {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
@@ -90,65 +83,36 @@ st.markdown(
         padding: 0 !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* TABLE STYLING (st.table + st.dataframe)                        */
-    /* -------------------------------------------------------------- */
-
-    /* font behaviour */
-    div[data-testid="stDataFrame"] td,
-    div[data-testid="stDataFrame"] th {
-        font-size: 0.85rem !important;
-        white-space: nowrap !important;
-        text-overflow: ellipsis !important;
-    }
-
-    div[data-testid="stDataFrame"] {
-        overflow-x: auto !important;
-    }
-
-    /* FORCE ONLY TABLE TEXT WHITE */
-    div[data-testid="stTable"] *,
+    /* TABLE TEXT WHITE */
     div[data-testid="stDataFrame"] *,
+    div[data-testid="stTable"] *,
+    div[data-testid="stDataFrameScrollable"] *,
+    div[data-testid="stDataFrameContainer"] *,
     table, table * {
         color: #FFFFFF !important;
-        opacity: 1 !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* BUTTONS (Gawk Green + Purple Text)                             */
-    /* -------------------------------------------------------------- */
-    .stButton > button,
-    .stDownloadButton > button {
-        background-color: #D7DF23 !important; /* Gawk Green */
-        color: #542D54 !important;            /* Purple text */
+    /* BUTTONS (Gawk Green + Purple) */
+    .stButton > button, .stDownloadButton > button {
+        background-color: #D7DF23 !important;
+        color: #542D54 !important;
         border-radius: 999px !important;
         padding: 0.55rem 1.6rem !important;
-        border: none !important;
         font-weight: 700 !important;
+        border: none !important;
         font-family: "Montserrat", sans-serif !important;
     }
-
-    .stButton > button:hover,
-    .stDownloadButton > button:hover {
+    .stButton > button:hover, .stDownloadButton > button:hover {
         background-color: #C8D51E !important;
         color: #542D54 !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* PAGE WIDTH + HEADINGS                                         */
-    /* -------------------------------------------------------------- */
+    /* PAGE WIDTH */
     .block-container {
         max-width: 1500px !important;
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
     }
-
-    .pop-title,
-    .pop-subtitle {
-        text-align: center !important;
-        color: #FFFFFF !important;
-    }
-
     </style>
     """,
     unsafe_allow_html=True,
