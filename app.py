@@ -118,6 +118,19 @@ st.markdown(
         color: #FFFFFF !important;
     }
 
+    /* FIX: Force the top Streamlit toolbar/header to match Gawk Purple */
+    [data-testid="stHeader"] {
+        background-color: #542D54 !important;
+    }
+
+    [data-testid="stToolbar"] {
+        background-color: #542D54 !important;
+    }
+
+    header, .st-emotion-cache-18ni7ap {
+        background-color: #542D54 !important;
+    }
+
     /* File uploader box rounding */
     .st-emotion-cache-9j8j93, .st-emotion-cache-1vbkxwb {
         border-radius: 12px !important;
@@ -128,9 +141,7 @@ st.markdown(
 )
 
 st.markdown(
-    '<div class="pop-title">Drop your PoP images</div>'
-    '<div class="pop-subtitle">Use the same filenames as the desktop PoP Report Builder. '
-    'We’ll read the client, campaign and live date from the first valid file.</div>',
+    '<div class="pop-title">Image file naming must follow = Site Name - Site Code - Client - Campaign - DDMMYY - Type.ext</div>'
     unsafe_allow_html=True,
 )
 
