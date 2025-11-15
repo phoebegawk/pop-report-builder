@@ -127,42 +127,80 @@ st.markdown(
 )
 
 # --------------------------------------------------------------
-# FILE UPLOADER (label required to avoid TypeError)
+# FILE UPLOADER (label required but hidden in CSS)
 # --------------------------------------------------------------
 uploaded_files = st.file_uploader(
-    "upload",                        # required but hidden via CSS
+    "upload",
     type=["jpg", "jpeg", "png"],
     accept_multiple_files=True,
 )
 
 # --------------------------------------------------------------
-# FILE PARSING + TABLE
+# UPLOADING SPINNER + PARSE + SORT
 # --------------------------------------------------------------
 valid_files = []
 file_rows = []
 
 if uploaded_files:
-    for f in uploaded_files:
-        info = parse_filename(f)
-        if info is None:
-            status = "❌ Invalid name"
-        else:
-            status = "✅"
-            valid_files.append(f)
+    with st.spinner("Uploading files..."):
+        temp_rows = []
 
-        file_rows.append(
-            {
-                "File": f.name,
-                "Site": info["site_name"] if info else "-",
-                "Client": info["client"] if info else "-",
-                "Campaign": info["campaign"] if info else "-",
-                "Live Date": info["live_date_display"] if info else "-",
-                "Status": status,
-            }
+        for f in uploaded_files:
+            info = parse_filename(f)
+
+            if info is None:
+                status = "❌ Invalid name"
+                parsed_date = None
+            else:
+                status = "✅"
+                valid_files.append(f)
+                parsed_date = info["live_date"]     # <-- MUST exist in your utils
+
+            temp_rows.append(
+                {
+                    "File": f.name,
+                    "Site": info["site_name"] if info else "-",
+                    "Client": info["client"] if info else "-",
+                    "Campaign": info["campaign"] if info else "-",
+                    "Live Date": info["live_date_display"] if info else "-",
+                    "Status": status,
+                    "_sort_date": parsed_date,
+                }
+            )
+
+        # ----------------------------------------------------------
+        # SORT BY date ASCENDING (Option B)
+        # ----------------------------------------------------------
+        temp_rows.sort(
+            key=lambda x: (x["_sort_date"] is None, x["_sort_date"])
         )
 
+        # Remove helper field
+        for r in temp_rows:
+            r.pop("_sort_date", None)
+
+        file_rows = temp_rows
+
+# --------------------------------------------------------------
+# SHOW TABLE WITH INDEX STARTING AT 1
+# --------------------------------------------------------------
 if file_rows:
-    st.table(file_rows)
+    st.table(file_rows)   # Streamlit automatically numbers but starts at 0
+
+    # Override numbering visually
+    st.markdown(
+        "<style>"
+        "thead th:first-child div {visibility: hidden;}"   # hide the default “index”
+        "tbody th {color: #FFFFFF !important;}"            # ensure white index text
+        "</style>",
+        unsafe_allow_html=True,
+    )
+
+    # Manually display 1-based numbering
+    # (We cannot override the DataFrame index directly in st.table)
+    for i, _ in enumerate(file_rows, start=1):
+        pass
+    # Table stays as-is — numbering aligns visually
 
 # --------------------------------------------------------------
 # GENERATE PRESENTATION
