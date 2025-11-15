@@ -9,7 +9,6 @@ HEADER_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/ma
 # Header
 st.image(HEADER_URL, use_container_width=True)
 
-# Styles – mirrored from Mock Up Machine where possible
 st.markdown(
     """
     <style>
@@ -26,7 +25,7 @@ st.markdown(
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 
-    /* Remove Streamlit top warning/toolbar (the white bar you saw) */
+    /* Remove Streamlit top warning/toolbar */
     [data-testid="stNotification"], 
     .stNotification, 
     .stAlert, 
@@ -43,17 +42,14 @@ st.markdown(
     /* FILE UPLOADER — GAWK PURPLE */
     /* ---------------------- */
 
-    /* Text inside the uploader (title, subtitle, help text) */
     div[data-testid="stFileUploader"] * {
         color: #542D54 !important;
     }
 
-    /* The little upload icon */
     div[data-testid="stFileUploader"] svg {
         fill: #542D54 !important;
     }
 
-    /* Upload button text */
     div[data-testid="stFileUploader"] button {
         color: #542D54 !important;
         font-weight: 700 !important;
@@ -61,9 +57,15 @@ st.markdown(
     }
 
     /* ---------------------- */
-    /* TABLE + STATUS TEXT — WHITE */
+    /* FIX: Uploaded file list BELOW uploader */
     /* ---------------------- */
+    div[data-testid="stFileUploaderDropzone"] + div * {
+        color: #FFFFFF !important;
+    }
 
+    /* ---------------------- */
+    /* TABLE + PAGINATION — WHITE */
+    /* ---------------------- */
     div[data-testid="stDataFrame"] *, 
     .stDataFrame *, 
     .stTable * {
@@ -76,6 +78,19 @@ st.markdown(
         color: #FFFFFF !important;
     }
 
+    /* ---------------------- */
+    /* TABLE WIDTH + NO WRAPPING */
+    /* ---------------------- */
+    div[data-testid="stDataFrame"] {
+        width: 100% !important;
+    }
+
+    div[data-testid="stDataFrame"] td,
+    div[data-testid="stDataFrame"] th {
+        white-space: nowrap !important;
+        text-overflow: ellipsis !important;
+    }
+
     /* Buttons */
     .stButton > button, .stDownloadButton > button {
         background-color: #D7DF23 !important;
@@ -86,10 +101,12 @@ st.markdown(
         font-weight: 700 !important;
         font-family: "Montserrat", sans-serif !important;
     }
+
     .stButton > button:hover, .stDownloadButton > button:hover {
         background-color: #C8D51E !important;
         color: #542D54 !important;
     }
+
     .stButton > button:disabled,
     .stDownloadButton > button:disabled {
         background-color: #d0c0d3 !important;
@@ -97,11 +114,11 @@ st.markdown(
         opacity: 0.5 !important;
     }
 
-    /* Page content box spacing */
+    /* Page content box */
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
-        max-width: 1100px !important;
+        max-width: 1200px !important;
     }
 
     /* Title + Subtitle */
@@ -111,6 +128,7 @@ st.markdown(
         margin-bottom: 0.5rem;
         color: #FFFFFF !important;
     }
+
     .pop-subtitle {
         font-size: 0.95rem;
         opacity: 0.85;
@@ -118,16 +136,11 @@ st.markdown(
         color: #FFFFFF !important;
     }
 
-    /* FIX: Force the top Streamlit toolbar/header to match Gawk Purple */
-    [data-testid="stHeader"] {
-        background-color: #542D54 !important;
-    }
-
-    [data-testid="stToolbar"] {
-        background-color: #542D54 !important;
-    }
-
-    header, .st-emotion-cache-18ni7ap {
+    /* Fix top bar */
+    [data-testid="stHeader"],
+    [data-testid="stToolbar"],
+    header,
+    .st-emotion-cache-18ni7ap {
         background-color: #542D54 !important;
     }
 
@@ -160,7 +173,7 @@ if uploaded_files:
         if info is None:
             status = "❌ Invalid name"
         else:
-            status = "✅ OK"
+            status = "✅"
             valid_files.append(f)
 
         file_rows.append(
