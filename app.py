@@ -129,21 +129,21 @@ st.markdown(
 # FILE UPLOADER (label required but hidden in CSS)
 # --------------------------------------------------------------
 uploaded_files = st.file_uploader(
-    "upload",   # required label, hidden via CSS
+    "upload",   # required label, hidden by CSS
     type=["jpg", "jpeg", "png"],
     accept_multiple_files=True,
 )
 
 # --------------------------------------------------------------
-# PARSE FILES + SORTED OUTPUT + "FILES RECEIVED" MESSAGE
+# PARSE + SORT + FEEDBACK
 # --------------------------------------------------------------
 valid_files = []
 file_rows = []
 
 if uploaded_files:
 
-    # Give the user feedback (since spinner does NOT work during upload)
-    st.success("Files received… Processing data now.")
+    # ✔ Show confirmation (we fixed CSS so success banners now show)
+    st.success("Files received… Processing now.")
 
     temp_rows = []
 
@@ -156,7 +156,7 @@ if uploaded_files:
         else:
             status = "✅"
             valid_files.append(f)
-            parsed_date = info["live_date"]     # must exist in utils
+            parsed_date = info["live_date"]
 
         temp_rows.append(
             {
@@ -170,13 +170,8 @@ if uploaded_files:
             }
         )
 
-    # ----------------------------------------------------------
-    # SORT BY Live Date ASCENDING
-    # (nulls or invalid go last)
-    # ----------------------------------------------------------
-    temp_rows.sort(
-        key=lambda x: (x["_sort_date"] is None, x["_sort_date"])
-    )
+    # SORT BY DATE (invalid last)
+    temp_rows.sort(key=lambda x: (x["_sort_date"] is None, x["_sort_date"]))
 
     # Remove helper
     for r in temp_rows:
@@ -186,24 +181,16 @@ if uploaded_files:
 
 
 # --------------------------------------------------------------
-# SHOW TABLE, ENFORCE WHITE TEXT, INDEX START AT 1
+# SHOW TABLE WITH INDEX STARTING AT 1
 # --------------------------------------------------------------
 if file_rows:
 
-    # Fix Streamlit index coloring + hide zero-based header
-    st.markdown(
-        """
-        <style>
-            thead th:first-child div {visibility: hidden !important;}
-            tbody th {color: #FFFFFF !important;}
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    # Create a manual index column starting at 1
+    indexed_rows = []
+    for i, row in enumerate(file_rows, start=1):
+        indexed_rows.append({"#": i, **row})
 
-    # Show table
-    st.table(file_rows)
-
+    st.table(indexed_rows)   # Streamlit displays our custom index column
 
 # --------------------------------------------------------------
 # GENERATE PRESENTATION
