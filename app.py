@@ -39,9 +39,14 @@ st.markdown(
     /* FIX 1 — FILE UPLOADER DROPZONE TEXT → GAWK PURPLE ONLY */
     /* ------------------------------------------------------ */
 
-    /* Strongest selector to override the global white rule */
-    .stApp div[data-testid="stFileUploader"] div[data-testid="stFileUploaderDropzone"] * {
+    /* Absolute hammer: everything inside the dropzone = purple */
+    .stApp div[data-testid="stFileUploaderDropzone"],
+    .stApp div[data-testid="stFileUploaderDropzone"] *,
+    .stApp div[data-testid="stFileUploaderDropzone"] label,
+    .stApp div[data-testid="stFileUploaderDropzone"] p,
+    .stApp div[data-testid="stFileUploaderDropzone"] span {
         color: #542D54 !important;
+        opacity: 1 !important;
     }
 
     /* Dropzone icon */
@@ -58,32 +63,41 @@ st.markdown(
         font-family: "Montserrat", sans-serif !important;
     }
 
-    /* Fix: uploaded file list (white) */
+    /* Uploaded file list (ensure WHITE text below dropzone) */
+    div[data-testid="stFileUploaderDropzone"] + div,
     div[data-testid="stFileUploaderDropzone"] + div * {
         color: #FFFFFF !important;
     }
 
-    /* Remove white chips around uploaded files */
-    div[data-testid="stFileUploaderFile"] {
+    /* ---------------------------------------------- */
+    /* FIX 2 — Remove white chips / pill backgrounds  */
+    /* ---------------------------------------------- */
+
+    /* Kill background on file rows & their wrappers */
+    div[data-testid="stFileUploaderFile"],
+    div[data-testid="stFileUploaderFile"] div {
         background: transparent !important;
-        border: none !important;
         box-shadow: none !important;
+        border: none !important;
     }
 
-    /* Delete (X) button styling */
+    /* Then restyle the delete (X) button itself */
     div[data-testid="stFileUploaderFile"] button {
         background: #542D54 !important;
         color: #FFFFFF !important;
         border: 1px solid #FFFFFF !important;
         border-radius: 6px !important;
+        box-shadow: none !important;
     }
 
     /* -------------------------------------- */
-    /* FIX 2 — PAGINATION ARROWS (Next / Prev) */
+    /* FIX 3 — PAGINATION ARROWS (Next / Prev) */
     /* -------------------------------------- */
 
     button[aria-label="Next"],
-    button[aria-label="Previous"] {
+    button[aria-label="Previous"],
+    button[title="Next page"],
+    button[title="Previous page"] {
         background: #542D54 !important;
         color: #FFFFFF !important;
         border: 1px solid #FFFFFF !important;
@@ -92,7 +106,9 @@ st.markdown(
     }
 
     button[aria-label="Next"]:hover,
-    button[aria-label="Previous"]:hover {
+    button[aria-label="Previous"]:hover,
+    button[title="Next page"]:hover,
+    button[title="Previous page"]:hover {
         background: #6a3a6a !important;
         border-color: #FFFFFF !important;
     }
@@ -108,7 +124,6 @@ st.markdown(
         min-width: 100% !important;
     }
 
-    /* Table text size + nowrap */
     div[data-testid="stDataFrame"] td,
     div[data-testid="stDataFrame"] th {
         font-size: 0.85rem !important;
@@ -116,12 +131,10 @@ st.markdown(
         text-overflow: ellipsis !important;
     }
 
-    /* Horizontal scroll for extra-long rows */
     div[data-testid="stDataFrame"] {
         overflow-x: auto !important;
     }
 
-    /* Pagination + helper text */
     .st-emotion-cache-1y4p8pa,
     .st-emotion-cache-1m8g1qv,
     div[data-testid="stDataFrame"] p {
@@ -163,7 +176,7 @@ st.markdown(
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
-        max-width: 1500px !important; /* WIDEST safe width */
+        max-width: 1500px !important;
     }
 
     .pop-title {
