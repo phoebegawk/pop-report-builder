@@ -26,14 +26,11 @@ st.markdown(
     footer {visibility: hidden;}
 
     /* Remove Streamlit warning/toolbar */
-    [data-testid="stNotification"],
-    .stNotification,
-    .stAlert,
-    .stToolbar {
+    [data-testid="stNotification"], .stNotification, .stAlert, .stToolbar {
         display: none !important;
     }
 
-    /* All text is WHITE by default */
+    /* Default text = WHITE */
     * {
         color: #FFFFFF !important;
     }
@@ -42,17 +39,17 @@ st.markdown(
     /* FILE UPLOADER — GAWK PURPLE DROPZONE ONLY */
     /* -------------------------------------- */
 
-    /* Dropzone content (cloud icon + 2 lines of text) */
+    /* Dropzone box content (icon + text) */
     div[data-testid="stFileUploaderDropzone"] * {
         color: #542D54 !important;
     }
 
-    /* Upload icon */
+    /* Dropzone icon */
     div[data-testid="stFileUploaderDropzone"] svg {
         fill: #542D54 !important;
     }
 
-    /* Upload "Browse files" button */
+    /* Browse Files button */
     div[data-testid="stFileUploader"] button {
         color: #542D54 !important;
         background-color: #FFFFFF !important;
@@ -61,33 +58,61 @@ st.markdown(
         font-family: "Montserrat", sans-serif !important;
     }
 
-    /* Uploaded file list BELOW the dropzone (force WHITE) */
+    /* Uploaded file list (force white) */
     div[data-testid="stFileUploaderDropzone"] + div * {
         color: #FFFFFF !important;
     }
 
-    /* -------------------------------------- */
-    /* TABLE + PAGINATION — WHITE + FULL WIDTH */
-    /* -------------------------------------- */
-
-    div[data-testid="stHorizontalBlock"] {
-        width: 100% !important;
+    /* Remove white tag "chips" around each uploaded file */
+    div[data-testid="stFileUploaderFile"] {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
     }
 
+    /* Delete (X) button next to each file */
+    div[data-testid="stFileUploaderFile"] button {
+        background: #542D54 !important;
+        color: #FFFFFF !important;
+        border: 1px solid #FFFFFF !important;
+        border-radius: 6px !important;
+    }
+
+    /* -------------------------------------- */
+    /* TABLE — FULL WIDTH, NO WRAP, SMALLER TEXT */
+    /* -------------------------------------- */
+
+    /* Force full stretch for all parent containers */
+    div[data-testid="stHorizontalBlock"],
+    div[data-testid="stVerticalBlock"],
     div[data-testid="stDataFrame"] {
         width: 100% !important;
         min-width: 100% !important;
     }
 
+    /* Make the table text slightly smaller to avoid wrapping */
     div[data-testid="stDataFrame"] td,
     div[data-testid="stDataFrame"] th {
+        font-size: 0.85rem !important;
         white-space: nowrap !important;
         text-overflow: ellipsis !important;
+    }
+
+    /* Allow horizontal scrolling instead of wrapping */
+    div[data-testid="stDataFrame"] {
+        overflow-x: auto !important;
+    }
+
+    /* Pagination + misc table text */
+    .st-emotion-cache-1y4p8pa, .st-emotion-cache-1m8g1qv,
+    div[data-testid="stDataFrame"] p {
+        color: #FFFFFF !important;
     }
 
     /* -------------------------------------- */
     /* BUTTONS */
     /* -------------------------------------- */
+
     .stButton > button,
     .stDownloadButton > button {
         background-color: #D7DF23 !important;
@@ -115,10 +140,11 @@ st.markdown(
     /* -------------------------------------- */
     /* PAGE WIDTH + HEADINGS */
     /* -------------------------------------- */
+
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
-        max-width: 1200px !important;
+        max-width: 1400px !important; /* wider to prevent wrapping */
     }
 
     .pop-title {
@@ -126,6 +152,7 @@ st.markdown(
         font-weight: 700;
         margin-bottom: 0.5rem;
         color: #FFFFFF !important;
+        text-align: center !important;
     }
 
     .pop-subtitle {
@@ -133,9 +160,10 @@ st.markdown(
         opacity: 0.85;
         margin-bottom: 1.5rem;
         color: #FFFFFF !important;
+        text-align: center !important;
     }
 
-    /* Streamlit header fix */
+    /* Fix Streamlit header bar */
     [data-testid="stHeader"],
     [data-testid="stToolbar"],
     header,
