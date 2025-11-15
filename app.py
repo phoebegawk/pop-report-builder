@@ -35,21 +35,21 @@ st.markdown(
         color: #FFFFFF !important;
     }
 
-    /* -------------------------------------- */
-    /* FILE UPLOADER — GAWK PURPLE DROPZONE ONLY */
-    /* -------------------------------------- */
+    /* ------------------------------------------------------ */
+    /* FIX 1 — FILE UPLOADER DROPZONE TEXT → GAWK PURPLE ONLY */
+    /* ------------------------------------------------------ */
 
-    /* Dropzone box content (icon + text) */
-    div[data-testid="stFileUploaderDropzone"] * {
+    /* Strongest selector to override the global white rule */
+    .stApp div[data-testid="stFileUploader"] div[data-testid="stFileUploaderDropzone"] * {
         color: #542D54 !important;
     }
 
     /* Dropzone icon */
-    div[data-testid="stFileUploaderDropzone"] svg {
+    .stApp div[data-testid="stFileUploaderDropzone"] svg {
         fill: #542D54 !important;
     }
 
-    /* Browse Files button */
+    /* “Browse files” button */
     div[data-testid="stFileUploader"] button {
         color: #542D54 !important;
         background-color: #FFFFFF !important;
@@ -58,19 +58,19 @@ st.markdown(
         font-family: "Montserrat", sans-serif !important;
     }
 
-    /* Uploaded file list (force white) */
+    /* Fix: uploaded file list (white) */
     div[data-testid="stFileUploaderDropzone"] + div * {
         color: #FFFFFF !important;
     }
 
-    /* Remove white tag "chips" around each uploaded file */
+    /* Remove white chips around uploaded files */
     div[data-testid="stFileUploaderFile"] {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
     }
 
-    /* Delete (X) button next to each file */
+    /* Delete (X) button styling */
     div[data-testid="stFileUploaderFile"] button {
         background: #542D54 !important;
         color: #FFFFFF !important;
@@ -79,10 +79,28 @@ st.markdown(
     }
 
     /* -------------------------------------- */
-    /* TABLE — FULL WIDTH, NO WRAP, SMALLER TEXT */
+    /* FIX 2 — PAGINATION ARROWS (Next / Prev) */
     /* -------------------------------------- */
 
-    /* Force full stretch for all parent containers */
+    button[aria-label="Next"],
+    button[aria-label="Previous"] {
+        background: #542D54 !important;
+        color: #FFFFFF !important;
+        border: 1px solid #FFFFFF !important;
+        border-radius: 6px !important;
+        padding: 2px 6px !important;
+    }
+
+    button[aria-label="Next"]:hover,
+    button[aria-label="Previous"]:hover {
+        background: #6a3a6a !important;
+        border-color: #FFFFFF !important;
+    }
+
+    /* -------------------------------------- */
+    /* TABLE — FULL WIDTH / SMALLER TEXT / NOWRAP */
+    /* -------------------------------------- */
+
     div[data-testid="stHorizontalBlock"],
     div[data-testid="stVerticalBlock"],
     div[data-testid="stDataFrame"] {
@@ -90,7 +108,7 @@ st.markdown(
         min-width: 100% !important;
     }
 
-    /* Make the table text slightly smaller to avoid wrapping */
+    /* Table text size + nowrap */
     div[data-testid="stDataFrame"] td,
     div[data-testid="stDataFrame"] th {
         font-size: 0.85rem !important;
@@ -98,19 +116,20 @@ st.markdown(
         text-overflow: ellipsis !important;
     }
 
-    /* Allow horizontal scrolling instead of wrapping */
+    /* Horizontal scroll for extra-long rows */
     div[data-testid="stDataFrame"] {
         overflow-x: auto !important;
     }
 
-    /* Pagination + misc table text */
-    .st-emotion-cache-1y4p8pa, .st-emotion-cache-1m8g1qv,
+    /* Pagination + helper text */
+    .st-emotion-cache-1y4p8pa,
+    .st-emotion-cache-1m8g1qv,
     div[data-testid="stDataFrame"] p {
         color: #FFFFFF !important;
     }
 
     /* -------------------------------------- */
-    /* BUTTONS */
+    /* BUTTONS (Generate PoP Report + Download) */
     /* -------------------------------------- */
 
     .stButton > button,
@@ -144,7 +163,7 @@ st.markdown(
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
-        max-width: 1400px !important; /* wider to prevent wrapping */
+        max-width: 1500px !important; /* WIDEST safe width */
     }
 
     .pop-title {
