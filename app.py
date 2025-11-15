@@ -35,26 +35,24 @@ st.markdown(
         color: #FFFFFF !important;
     }
 
-    /* ------------------------------------------------------ */
-    /* FIX 1 — FILE UPLOADER DROPZONE TEXT → GAWK PURPLE ONLY */
-    /* ------------------------------------------------------ */
+    /* ------------------------------------------------------------- */
+    /* FIX 1 — FILE UPLOADER DROPZONE ONLY (GAWK PURPLE TEXT + ICON) */
+    /* ------------------------------------------------------------- */
 
-    /* Absolute hammer: everything inside the dropzone = purple */
     .stApp div[data-testid="stFileUploaderDropzone"],
     .stApp div[data-testid="stFileUploaderDropzone"] *,
-    .stApp div[data-testid="stFileUploaderDropzone"] label,
     .stApp div[data-testid="stFileUploaderDropzone"] p,
-    .stApp div[data-testid="stFileUploaderDropzone"] span {
+    .stApp div[data-testid="stFileUploaderDropzone"] span,
+    .stApp div[data-testid="stFileUploaderDropzone"] label {
         color: #542D54 !important;
         opacity: 1 !important;
     }
 
-    /* Dropzone icon */
     .stApp div[data-testid="stFileUploaderDropzone"] svg {
         fill: #542D54 !important;
     }
 
-    /* “Browse files” button */
+    /* Browse Files button */
     div[data-testid="stFileUploader"] button {
         color: #542D54 !important;
         background-color: #FFFFFF !important;
@@ -63,59 +61,22 @@ st.markdown(
         font-family: "Montserrat", sans-serif !important;
     }
 
-    /* Uploaded file list (ensure WHITE text below dropzone) */
-    div[data-testid="stFileUploaderDropzone"] + div,
-    div[data-testid="stFileUploaderDropzone"] + div * {
-        color: #FFFFFF !important;
+    /* ------------------------------------------------------------- */
+    /* FIX 2 — REMOVE FILE LIST BELOW THE UPLOADER COMPLETELY        */
+    /* ------------------------------------------------------------- */
+
+    /* Hide file-name list, chips, delete buttons — EVERYTHING */
+    div[data-testid="stFileUploaderDropzone"] + div {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    /* ---------------------------------------------- */
-    /* FIX 2 — Remove white chips / pill backgrounds  */
-    /* ---------------------------------------------- */
-
-    /* Kill background on file rows & their wrappers */
-    div[data-testid="stFileUploaderFile"],
-    div[data-testid="stFileUploaderFile"] div {
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-    }
-
-    /* Then restyle the delete (X) button itself */
-    div[data-testid="stFileUploaderFile"] button {
-        background: #542D54 !important;
-        color: #FFFFFF !important;
-        border: 1px solid #FFFFFF !important;
-        border-radius: 6px !important;
-        box-shadow: none !important;
-    }
-
-    /* -------------------------------------- */
-    /* FIX 3 — PAGINATION ARROWS (Next / Prev) */
-    /* -------------------------------------- */
-
-    button[aria-label="Next"],
-    button[aria-label="Previous"],
-    button[title="Next page"],
-    button[title="Previous page"] {
-        background: #542D54 !important;
-        color: #FFFFFF !important;
-        border: 1px solid #FFFFFF !important;
-        border-radius: 6px !important;
-        padding: 2px 6px !important;
-    }
-
-    button[aria-label="Next"]:hover,
-    button[aria-label="Previous"]:hover,
-    button[title="Next page"]:hover,
-    button[title="Previous page"]:hover {
-        background: #6a3a6a !important;
-        border-color: #FFFFFF !important;
-    }
-
-    /* -------------------------------------- */
-    /* TABLE — FULL WIDTH / SMALLER TEXT / NOWRAP */
-    /* -------------------------------------- */
+    /* ------------------------------------------------------------- */
+    /* TABLE — FULL WIDTH / SMALLER TEXT / NOWRAP                    */
+    /* ------------------------------------------------------------- */
 
     div[data-testid="stHorizontalBlock"],
     div[data-testid="stVerticalBlock"],
@@ -133,12 +94,6 @@ st.markdown(
 
     div[data-testid="stDataFrame"] {
         overflow-x: auto !important;
-    }
-
-    .st-emotion-cache-1y4p8pa,
-    .st-emotion-cache-1m8g1qv,
-    div[data-testid="stDataFrame"] p {
-        color: #FFFFFF !important;
     }
 
     /* -------------------------------------- */
@@ -203,7 +158,6 @@ st.markdown(
         background-color: #542D54 !important;
     }
 
-    /* File uploader rounding */
     .st-emotion-cache-9j8j93,
     .st-emotion-cache-1vbkxwb {
         border-radius: 12px !important;
