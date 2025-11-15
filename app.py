@@ -14,75 +14,69 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    /* GLOBAL FONT + BACKGROUND */
+    /* GLOBAL BACKGROUND + FONT */
     html, body, .stApp, .stAppViewContainer, .main {
         background-color: #542D54 !important;
         color: #FFFFFF !important;
         font-family: "Montserrat", sans-serif !important;
     }
 
-    /* Remove default Streamlit menu & footer */
+    /* Remove menu + footer */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 
-    /* Remove Streamlit top warning/toolbar */
-    [data-testid="stNotification"], 
-    .stNotification, 
-    .stAlert, 
+    /* Remove Streamlit warning/toolbar */
+    [data-testid="stNotification"],
+    .stNotification,
+    .stAlert,
     .stToolbar {
         display: none !important;
     }
 
-    /* Default text stays WHITE */
+    /* All text is WHITE by default */
     * {
         color: #FFFFFF !important;
     }
 
-    /* ---------------------- */
-    /* FILE UPLOADER — GAWK PURPLE */
-    /* ---------------------- */
+    /* -------------------------------------- */
+    /* FILE UPLOADER — GAWK PURPLE DROPZONE ONLY */
+    /* -------------------------------------- */
 
-    div[data-testid="stFileUploader"] * {
+    /* Dropzone content (cloud icon + 2 lines of text) */
+    div[data-testid="stFileUploaderDropzone"] * {
         color: #542D54 !important;
     }
 
-    div[data-testid="stFileUploader"] svg {
+    /* Upload icon */
+    div[data-testid="stFileUploaderDropzone"] svg {
         fill: #542D54 !important;
     }
 
+    /* Upload "Browse files" button */
     div[data-testid="stFileUploader"] button {
         color: #542D54 !important;
+        background-color: #FFFFFF !important;
         font-weight: 700 !important;
+        border-radius: 8px !important;
         font-family: "Montserrat", sans-serif !important;
     }
 
-    /* ---------------------- */
-    /* FIX: Uploaded file list BELOW uploader */
-    /* ---------------------- */
+    /* Uploaded file list BELOW the dropzone (force WHITE) */
     div[data-testid="stFileUploaderDropzone"] + div * {
         color: #FFFFFF !important;
     }
 
-    /* ---------------------- */
-    /* TABLE + PAGINATION — WHITE */
-    /* ---------------------- */
-    div[data-testid="stDataFrame"] *, 
-    .stDataFrame *, 
-    .stTable * {
-        color: #FFFFFF !important;
+    /* -------------------------------------- */
+    /* TABLE + PAGINATION — WHITE + FULL WIDTH */
+    /* -------------------------------------- */
+
+    div[data-testid="stHorizontalBlock"] {
+        width: 100% !important;
     }
 
-    .st-emotion-cache-1y4p8pa, 
-    .st-emotion-cache-1m8g1qv, 
-    div[data-testid="stDataFrame"] p {
-        color: #FFFFFF !important;
-    }
-
-    /* ---------------------- */
-    /* TABLE WIDTH + NO WRAPPING */
-    /* ---------------------- */
     div[data-testid="stDataFrame"] {
         width: 100% !important;
+        min-width: 100% !important;
     }
 
     div[data-testid="stDataFrame"] td,
@@ -91,8 +85,11 @@ st.markdown(
         text-overflow: ellipsis !important;
     }
 
-    /* Buttons */
-    .stButton > button, .stDownloadButton > button {
+    /* -------------------------------------- */
+    /* BUTTONS */
+    /* -------------------------------------- */
+    .stButton > button,
+    .stDownloadButton > button {
         background-color: #D7DF23 !important;
         color: #542D54 !important;
         border-radius: 999px !important;
@@ -102,7 +99,8 @@ st.markdown(
         font-family: "Montserrat", sans-serif !important;
     }
 
-    .stButton > button:hover, .stDownloadButton > button:hover {
+    .stButton > button:hover,
+    .stDownloadButton > button:hover {
         background-color: #C8D51E !important;
         color: #542D54 !important;
     }
@@ -114,14 +112,15 @@ st.markdown(
         opacity: 0.5 !important;
     }
 
-    /* Page content box */
+    /* -------------------------------------- */
+    /* PAGE WIDTH + HEADINGS */
+    /* -------------------------------------- */
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
         max-width: 1200px !important;
     }
 
-    /* Title + Subtitle */
     .pop-title {
         font-size: 1.4rem;
         font-weight: 700;
@@ -136,7 +135,7 @@ st.markdown(
         color: #FFFFFF !important;
     }
 
-    /* Fix top bar */
+    /* Streamlit header fix */
     [data-testid="stHeader"],
     [data-testid="stToolbar"],
     header,
@@ -144,10 +143,12 @@ st.markdown(
         background-color: #542D54 !important;
     }
 
-    /* File uploader box rounding */
-    .st-emotion-cache-9j8j93, .st-emotion-cache-1vbkxwb {
+    /* File uploader rounding */
+    .st-emotion-cache-9j8j93,
+    .st-emotion-cache-1vbkxwb {
         border-radius: 12px !important;
     }
+
     </style>
     """,
     unsafe_allow_html=True,
