@@ -66,7 +66,7 @@ st.markdown(
         overflow: hidden !important;
     }
 
-    /* REMOVE PAGINATION (ALL STREAMLIT VERSIONS) */
+    /* REMOVE ALL PAGINATION (ALL STREAMLIT VERSIONS) */
     div[data-testid="stDataFramePaginator"],
     div[data-testid="stPaginator"],
     div[data-testid="stPagination"],
@@ -74,7 +74,9 @@ st.markdown(
     div:has(> button[aria-label="Next"]),
     div:has(> button[aria-label="Previous"]),
     button[aria-label="Next"],
-    button[aria-label="Previous"] {
+    button[aria-label="Previous"],
+    div[data-testid="stDataFrame"] > div:nth-child(1):has(span),
+    div[data-testid="stDataFrame"] span:contains("Showing page") {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
@@ -138,7 +140,7 @@ uploaded_files = st.file_uploader(
 )
 
 # --------------------------------------------------------------
-# PARSE + SORT (NO SPINNER, NO DIALOG)
+# PARSE + SORT
 # --------------------------------------------------------------
 valid_files = []
 file_rows = []
@@ -156,7 +158,7 @@ if uploaded_files:
         else:
             status = "✅"
             valid_files.append(f)
-            parsed_date = info["live_date"]   # already in utils
+            parsed_date = info["live_date"]
 
         temp_rows.append(
             {
@@ -170,17 +172,15 @@ if uploaded_files:
             }
         )
 
-    # Sort by date (invalid last)
     temp_rows.sort(key=lambda x: (x["_sort_date"] is None, x["_sort_date"]))
 
-    # remove helper keys
     for r in temp_rows:
         r.pop("_sort_date", None)
 
     file_rows = temp_rows
 
 # --------------------------------------------------------------
-# SHOW TABLE (DEFAULT STREAMLIT STYLE + INDEX STARTS AT 0)
+# SHOW TABLE
 # --------------------------------------------------------------
 if file_rows:
     st.table(file_rows)
