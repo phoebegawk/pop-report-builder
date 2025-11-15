@@ -9,38 +9,50 @@ HEADER_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/ma
 # Header
 st.image(HEADER_URL, width="stretch")
 
-# --------------------------------------------------------------
-# STYLE BLOCK (ALL VISUAL LOGIC)
-# --------------------------------------------------------------
 st.markdown(
     """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    /* GLOBAL BACKGROUND + FONT */
+    /* -------------------------------------------------------------- */
+    /* GLOBAL BACKGROUND + FONT                                       */
+    /* -------------------------------------------------------------- */
     html, body, .stApp, .stAppViewContainer, .main {
-        background-color: #542D54 !important;
-        color: #FFFFFF !important;
+        background-color: #542D54 !important;   /* Gawk Purple */
+        color: #FFFFFF !important;              /* Default text white */
         font-family: "Montserrat", sans-serif !important;
     }
 
-    #MainMenu, footer { visibility: hidden !important; }
-    [data-testid="stNotification"], .stAlert, .stToolbar { display: none !important; }
+    #MainMenu, footer {
+        visibility: hidden !important;
+    }
 
-    /* TOP STREAMLIT HEADER BAR */
+    [data-testid="stNotification"],
+    .stAlert,
+    .stToolbar {
+        display: none !important;
+    }
+
+    /* -------------------------------------------------------------- */
+    /* TOP STREAMLIT HEADER BAR                                       */
+    /* -------------------------------------------------------------- */
     header[data-testid="stHeader"],
     header[data-testid="stHeader"] * {
         background-color: #542D54 !important;
         color: #FFFFFF !important;
     }
 
-    /* HIDE FILE UPLOADER LABEL (BUT KEEP IT IN PYTHON) */
+    /* -------------------------------------------------------------- */
+    /* HIDE FILE UPLOADER LABEL (but label must exist in Python)      */
+    /* -------------------------------------------------------------- */
     div[data-testid="stFileUploader"] label {
         display: none !important;
         visibility: hidden !important;
     }
 
-    /* FILE UPLOADER DROPZONE — GAWK PURPLE TEXT */
+    /* -------------------------------------------------------------- */
+    /* FILE UPLOADER DROPZONE — PURE GAWK PURPLE TEXT                 */
+    /* -------------------------------------------------------------- */
     div[data-testid="stFileUploaderDropzone"] * {
         color: #542D54 !important;
         fill: #542D54 !important;
@@ -51,7 +63,7 @@ st.markdown(
         fill: #542D54 !important;
     }
 
-    /* Browse Files button */
+    /* Browse button */
     div[data-testid="stFileUploader"] button {
         background-color: #FFFFFF !important;
         color: #542D54 !important;
@@ -59,7 +71,9 @@ st.markdown(
         border-radius: 8px !important;
     }
 
-    /* REMOVE FILE LIST / CHIPS / DELETE / PAGINATION */
+    /* -------------------------------------------------------------- */
+    /* REMOVE FILE LIST / CHIPS / DELETE BUTTONS / PAGINATION         */
+    /* -------------------------------------------------------------- */
     div[data-testid="stFileUploaderUploadedFiles"],
     div[data-testid="stFileUploaderFile"],
     ul[role="listbox"],
@@ -76,35 +90,42 @@ st.markdown(
         padding: 0 !important;
     }
 
-    /* TABLE STYLING */
+    /* -------------------------------------------------------------- */
+    /* TABLE STYLING (st.table + st.dataframe)                        */
+    /* -------------------------------------------------------------- */
+
+    /* font behaviour */
     div[data-testid="stDataFrame"] td,
     div[data-testid="stDataFrame"] th {
         font-size: 0.85rem !important;
         white-space: nowrap !important;
         text-overflow: ellipsis !important;
     }
+
     div[data-testid="stDataFrame"] {
         overflow-x: auto !important;
     }
 
-    /* -------------------------------------------------------------- */
-    /* MAKE ONLY THE TABLE TEXT WHITE                                 */
-    /* -------------------------------------------------------------- */
-
-    div[data-testid="stDataFrame"] * {
-        color: #FFFFFF !important;   /* White text */
+    /* FORCE ONLY TABLE TEXT WHITE */
+    div[data-testid="stTable"] *,
+    div[data-testid="stDataFrame"] *,
+    table, table * {
+        color: #FFFFFF !important;
         opacity: 1 !important;
     }
 
-    /* BUTTON STYLING (Gawk Green + Purple Text) */
+    /* -------------------------------------------------------------- */
+    /* BUTTONS (Gawk Green + Purple Text)                             */
+    /* -------------------------------------------------------------- */
     .stButton > button,
     .stDownloadButton > button {
-        background-color: #D7DF23 !important;
-        color: #542D54 !important;
+        background-color: #D7DF23 !important; /* Gawk Green */
+        color: #542D54 !important;            /* Purple text */
         border-radius: 999px !important;
         padding: 0.55rem 1.6rem !important;
         border: none !important;
         font-weight: 700 !important;
+        font-family: "Montserrat", sans-serif !important;
     }
 
     .stButton > button:hover,
@@ -113,17 +134,21 @@ st.markdown(
         color: #542D54 !important;
     }
 
-    /* PAGE WIDTH */
+    /* -------------------------------------------------------------- */
+    /* PAGE WIDTH + HEADINGS                                         */
+    /* -------------------------------------------------------------- */
     .block-container {
         max-width: 1500px !important;
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
     }
 
-    .pop-title, .pop-subtitle {
+    .pop-title,
+    .pop-subtitle {
         text-align: center !important;
         color: #FFFFFF !important;
     }
+
     </style>
     """,
     unsafe_allow_html=True,
