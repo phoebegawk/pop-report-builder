@@ -117,6 +117,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
 # --------------------------------------------------------------
 # TITLE
 # --------------------------------------------------------------
@@ -129,21 +130,18 @@ st.markdown(
 # FILE UPLOADER (label required but hidden in CSS)
 # --------------------------------------------------------------
 uploaded_files = st.file_uploader(
-    "upload",   # required label, hidden by CSS
+    "upload",   # required but hidden by CSS
     type=["jpg", "jpeg", "png"],
     accept_multiple_files=True,
 )
 
 # --------------------------------------------------------------
-# PARSE + SORT + FEEDBACK
+# PARSE + SORT (NO SPINNER, NO DIALOG)
 # --------------------------------------------------------------
 valid_files = []
 file_rows = []
 
 if uploaded_files:
-
-    # ✔ Show confirmation (we fixed CSS so success banners now show)
-    st.success("Files received… Processing now.")
 
     temp_rows = []
 
@@ -156,7 +154,7 @@ if uploaded_files:
         else:
             status = "✅"
             valid_files.append(f)
-            parsed_date = info["live_date"]
+            parsed_date = info["live_date"]   # already in utils
 
         temp_rows.append(
             {
@@ -170,27 +168,20 @@ if uploaded_files:
             }
         )
 
-    # SORT BY DATE (invalid last)
+    # Sort by date (invalid last)
     temp_rows.sort(key=lambda x: (x["_sort_date"] is None, x["_sort_date"]))
 
-    # Remove helper
+    # remove helper keys
     for r in temp_rows:
         r.pop("_sort_date", None)
 
     file_rows = temp_rows
 
-
 # --------------------------------------------------------------
-# SHOW TABLE WITH INDEX STARTING AT 1
+# SHOW TABLE (DEFAULT STREAMLIT STYLE + INDEX STARTS AT 0)
 # --------------------------------------------------------------
 if file_rows:
-
-    # Create a manual index column starting at 1
-    indexed_rows = []
-    for i, row in enumerate(file_rows, start=1):
-        indexed_rows.append({"#": i, **row})
-
-    st.table(indexed_rows)   # Streamlit displays our custom index column
+    st.table(file_rows)
 
 # --------------------------------------------------------------
 # GENERATE PRESENTATION
