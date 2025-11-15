@@ -31,14 +31,6 @@ st.markdown(
         max-width: 1100px !important;
     }
 
-    .pop-card {
-        background-color: #ffffff;
-        padding: 2rem 2.5rem;
-        border-radius: 18px;
-        box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-        color: #542D54;
-    }
-
     .pop-title {
         font-size: 1.4rem;
         font-weight: 700;
@@ -82,8 +74,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
-st.markdown('<div class="pop-card">', unsafe_allow_html=True)
 
 st.markdown(
     '<div class="pop-title">Drop your PoP images</div>'
@@ -144,5 +134,3 @@ if pptx_bytes is not None:
         file_name=pptx_name,
         mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
     )
-
-st.markdown("</div>", unsafe_allow_html=True)
