@@ -122,9 +122,11 @@ st.markdown(
 # TITLE
 # --------------------------------------------------------------
 st.markdown(
-    '<div class="pop-title">Image file naming must follow = Site Name - Site Code - Client - Campaign - DDMMYY - Type.ext</div>',
+    '<div class="pop-title"><b>Image File Naming Convention ➡️ Site Name - Site Code - Client - Campaign - DDMMYY - Type.ext</b></div>',
     unsafe_allow_html=True,
 )
+
+st.markdown("<div style='height:30px;'></div>", unsafe_allow_html=True)
 
 # --------------------------------------------------------------
 # FILE UPLOADER (label required but hidden in CSS)
