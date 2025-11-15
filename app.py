@@ -29,8 +29,8 @@ st.markdown(
         display: none !important;
     }
 
-    /* REMOVE THE UNIVERSAL WHITE OVERRIDE — breaks uploader */
-    /* * { color: #FFFFFF !important; }   ← REMOVED */
+    /* Global text white — uploader overrides this */
+    * { color: #FFFFFF !important; }
 
     /* -------------------------------------------------------------- */
     /* TOP STREAMLIT HEADER BAR                                       */
@@ -44,15 +44,19 @@ st.markdown(
     }
 
     /* -------------------------------------------------------------- */
-    /* FILE UPLOADER — RESTORE OLD WORKING PURPLE TEXT LOGIC          */
+    /* HIDE FILE UPLOADER LABEL (but keep it in Python to avoid error) */
+    /* -------------------------------------------------------------- */
+    div[data-testid="stFileUploader"] label {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* -------------------------------------------------------------- */
+    /* FILE UPLOADER DROPZONE — PURPLE TEXT + ICON                    */
     /* -------------------------------------------------------------- */
 
-    /* Make every text element inside dropzone Gawk Purple */
-    div[data-testid="stFileUploaderDropzone"] *,
-    div[data-testid="stFileUploaderDropzone"] p,
-    div[data-testid="stFileUploaderDropzone"] span,
-    div[data-testid="stFileUploaderDropzone"] label,
-    div[data-testid="stFileUploaderDropzone"] div {
+    /* Everything inside DROPZONE (TEXT ONLY) becomes Gawk Purple */
+    div[data-testid="stFileUploaderDropzone"] *:not(button) {
         color: #542D54 !important;
         fill: #542D54 !important;
         opacity: 1 !important;
@@ -63,17 +67,16 @@ st.markdown(
         fill: #542D54 !important;
     }
 
-    /* Browse button */
+    /* Browse button stays white w/ purple text */
     div[data-testid="stFileUploader"] button {
         background-color: #FFFFFF !important;
         color: #542D54 !important;
         font-weight: 700 !important;
         border-radius: 8px !important;
-        font-family: "Montserrat", sans-serif !important;
     }
 
     /* -------------------------------------------------------------- */
-    /* REMOVE FILE LIST BELOW UPLOADER                               */
+    /* REMOVE FILE LIST BELOW UPLOADER COMPLETELY (LOCKED IN)         */
     /* -------------------------------------------------------------- */
     div[data-testid="stFileUploaderUploadedFiles"],
     div[data-testid="stFileUploaderFile"],
@@ -111,7 +114,6 @@ st.markdown(
         font-size: 0.85rem !important;
         white-space: nowrap !important;
         text-overflow: ellipsis !important;
-        color: #FFFFFF !important; /* table stays white */
     }
 
     div[data-testid="stDataFrame"] {
@@ -119,7 +121,7 @@ st.markdown(
     }
 
     /* -------------------------------------------------------------- */
-    /* BUTTONS                                                        */
+    /* BUTTONS (Gawk Green + Purple text)                             */
     /* -------------------------------------------------------------- */
     .stButton > button,
     .stDownloadButton > button {
