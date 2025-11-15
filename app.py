@@ -87,6 +87,15 @@ st.markdown(
         overflow-x: auto !important;
     }
 
+    /* -------------------------------------------------------------- */
+    /* MAKE ONLY THE TABLE TEXT WHITE                                 */
+    /* -------------------------------------------------------------- */
+
+    div[data-testid="stDataFrame"] * {
+        color: #FFFFFF !important;   /* White text */
+        opacity: 1 !important;
+    }
+
     /* BUTTON STYLING (Gawk Green + Purple Text) */
     .stButton > button,
     .stDownloadButton > button {
