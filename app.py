@@ -7,7 +7,7 @@ st.set_page_config(page_title="PoP Report Builder", layout="wide")
 HEADER_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/main/assets/Header-PoPReportBuilder.png"
 
 # Header
-st.image(HEADER_URL, use_column_width=True)
+st.image(HEADER_URL, use_container_width=True)
 
 # Styles – mirrored from Mock Up Machine where possible
 st.markdown(
