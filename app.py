@@ -18,47 +18,40 @@ st.markdown(
     /* GLOBAL BACKGROUND + FONT                                       */
     /* -------------------------------------------------------------- */
     html, body, .stApp, .stAppViewContainer, .main {
-        background-color: #542D54 !important;
-        color: #FFFFFF !important;
+        background-color: #542D54 !important;   /* Gawk Purple */
+        color: #FFFFFF !important;              /* Global white text */
         font-family: "Montserrat", sans-serif !important;
     }
 
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    [data-testid="stNotification"], .stAlert, .stToolbar {
-        display: none !important;
-    }
-
-    /* Global text white — uploader overrides this */
-    * { color: #FFFFFF !important; }
+    #MainMenu, footer { visibility: hidden !important; }
+    [data-testid="stNotification"], .stAlert, .stToolbar { display: none !important; }
 
     /* -------------------------------------------------------------- */
     /* TOP STREAMLIT HEADER BAR                                       */
     /* -------------------------------------------------------------- */
     header[data-testid="stHeader"],
-    header[data-testid="stHeader"] div,
-    .st-emotion-cache-18ni7ap,
-    .st-emotion-cache-1gulkj5,
-    .st-emotion-cache-q8sbsg {
+    header[data-testid="stHeader"] * {
         background-color: #542D54 !important;
+        color: #FFFFFF !important;
     }
 
     /* -------------------------------------------------------------- */
-    /* HIDE FILE UPLOADER LABEL (but keep it in Python to avoid error) */
+    /* HIDE FILE UPLOADER LABEL (must exist in Python)                */
     /* -------------------------------------------------------------- */
     div[data-testid="stFileUploader"] label {
         display: none !important;
         visibility: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     /* -------------------------------------------------------------- */
-    /* FILE UPLOADER DROPZONE — PURPLE TEXT + ICON                    */
+    /* FILE UPLOADER DROPZONE — PURE GAWK PURPLE                      */
     /* -------------------------------------------------------------- */
 
-    /* Everything inside DROPZONE (TEXT ONLY) becomes Gawk Purple */
-    div[data-testid="stFileUploaderDropzone"] *:not(button) {
+    /* All text inside dropzone → purple */
+    div[data-testid="stFileUploaderDropzone"] * {
         color: #542D54 !important;
-        fill: #542D54 !important;
         opacity: 1 !important;
     }
 
@@ -67,7 +60,7 @@ st.markdown(
         fill: #542D54 !important;
     }
 
-    /* Browse button stays white w/ purple text */
+    /* Browse files button */
     div[data-testid="stFileUploader"] button {
         background-color: #FFFFFF !important;
         color: #542D54 !important;
@@ -76,28 +69,18 @@ st.markdown(
     }
 
     /* -------------------------------------------------------------- */
-    /* REMOVE FILE LIST BELOW UPLOADER COMPLETELY (LOCKED IN)         */
+    /* REMOVE FILE LIST, CHIPS, DELETE BUTTONS, PAGINATION            */
     /* -------------------------------------------------------------- */
+
+    /* All uploaded-file UI elements */
     div[data-testid="stFileUploaderUploadedFiles"],
     div[data-testid="stFileUploaderFile"],
     ul[role="listbox"],
-    li[role="option"] {
-        display: none !important;
-        height: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        overflow: hidden !important;
-    }
-
-    /* -------------------------------------------------------------- */
-    /* REMOVE PAGINATION (“Showing page 1 of 2” + arrows)             */
-    /* -------------------------------------------------------------- */
+    li[role="option"],
     div[data-testid="stPagination"],
     div[data-testid="stPaginator"],
     div[aria-label="Pagination"],
-    div[class*="pagination"],
-    div:has(> button[aria-label="Next"]),
-    div:has(> button[aria-label="Previous"]) {
+    div[class*="pagination"] {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
@@ -121,12 +104,12 @@ st.markdown(
     }
 
     /* -------------------------------------------------------------- */
-    /* BUTTONS (Gawk Green + Purple text)                             */
+    /* BUTTONS (Gawk Green + Purple Text)                             */
     /* -------------------------------------------------------------- */
     .stButton > button,
     .stDownloadButton > button {
-        background-color: #D7DF23 !important;
-        color: #542D54 !important;
+        background-color: #D7DF23 !important; /* Gawk Green */
+        color: #542D54 !important;            /* Purple text */
         border-radius: 999px !important;
         padding: 0.55rem 1.6rem !important;
         border: none !important;
