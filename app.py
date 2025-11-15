@@ -141,7 +141,7 @@ st.markdown(
 )
 
 st.markdown(
-    '<div class="pop-title">Image file naming must follow = Site Name - Site Code - Client - Campaign - DDMMYY - Type.ext</div>'
+    '<div class="pop-title">Image file naming must follow = Site Name - Site Code - Client - Campaign - DDMMYY - Type.ext</div>',
     unsafe_allow_html=True,
 )
 
