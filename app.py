@@ -29,8 +29,8 @@ st.markdown(
         display: none !important;
     }
 
-    /* Global text white — allowed, but we override uploader later */
-    * { color: #FFFFFF !important; }
+    /* REMOVE THE UNIVERSAL WHITE OVERRIDE — breaks uploader */
+    /* * { color: #FFFFFF !important; }   ← REMOVED */
 
     /* -------------------------------------------------------------- */
     /* TOP STREAMLIT HEADER BAR                                       */
@@ -44,11 +44,15 @@ st.markdown(
     }
 
     /* -------------------------------------------------------------- */
-    /* FILE UPLOADER DROPZONE — FORCE PURPLE TEXT (STRONG OVERRIDE)   */
+    /* FILE UPLOADER — RESTORE OLD WORKING PURPLE TEXT LOGIC          */
     /* -------------------------------------------------------------- */
 
-    /* Make EVERYTHING inside dropzone purple unless it's a button */
-    div[data-testid="stFileUploaderDropzone"] *:not(button) {
+    /* Make every text element inside dropzone Gawk Purple */
+    div[data-testid="stFileUploaderDropzone"] *,
+    div[data-testid="stFileUploaderDropzone"] p,
+    div[data-testid="stFileUploaderDropzone"] span,
+    div[data-testid="stFileUploaderDropzone"] label,
+    div[data-testid="stFileUploaderDropzone"] div {
         color: #542D54 !important;
         fill: #542D54 !important;
         opacity: 1 !important;
@@ -65,12 +69,12 @@ st.markdown(
         color: #542D54 !important;
         font-weight: 700 !important;
         border-radius: 8px !important;
+        font-family: "Montserrat", sans-serif !important;
     }
 
     /* -------------------------------------------------------------- */
     /* REMOVE FILE LIST BELOW UPLOADER                               */
     /* -------------------------------------------------------------- */
-
     div[data-testid="stFileUploaderUploadedFiles"],
     div[data-testid="stFileUploaderFile"],
     ul[role="listbox"],
@@ -85,16 +89,12 @@ st.markdown(
     /* -------------------------------------------------------------- */
     /* REMOVE PAGINATION (“Showing page 1 of 2” + arrows)             */
     /* -------------------------------------------------------------- */
-
-    /* All known paginator containers */
     div[data-testid="stPagination"],
     div[data-testid="stPaginator"],
     div[aria-label="Pagination"],
     div[class*="pagination"],
     div:has(> button[aria-label="Next"]),
-    div:has(> button[aria-label="Previous"]),
-    div:has(> button[aria-label="Next Page"]),
-    div:has(> button[aria-label="Previous Page"]) {
+    div:has(> button[aria-label="Previous"]) {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
@@ -111,6 +111,7 @@ st.markdown(
         font-size: 0.85rem !important;
         white-space: nowrap !important;
         text-overflow: ellipsis !important;
+        color: #FFFFFF !important; /* table stays white */
     }
 
     div[data-testid="stDataFrame"] {
