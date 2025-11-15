@@ -15,39 +15,46 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    html, body, .main, .stApp, .stAppViewContainer {
+    /* GLOBAL FONT + BACKGROUND */
+    html, body, .stApp, .stAppViewContainer, .main {
         background-color: #542D54 !important;
-        color: white !important;
+        color: #FFFFFF !important;
         font-family: "Montserrat", sans-serif !important;
     }
 
-    header, .st-emotion-cache-18ni7ap {
-        background-color: #542D54 !important;
+    /* Remove default Streamlit menu & footer */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: visible;}
+
+    /* Streamlit writes many elements using attribute selectors */
+    * {
+        color: #FFFFFF !important;
     }
 
-    .block-container {
-        padding-top: 1rem !important;
-        padding-bottom: 3rem !important;
-        max-width: 1100px !important;
+    /* Override Streamlit uploader hint text */
+    div[data-testid="stFileUploader"] * {
+        color: #FFFFFF !important;
     }
 
-    .pop-title {
-        font-size: 1.4rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+    /* Table text (dataframe/table elements) */
+    div[data-testid="stDataFrame"] *, 
+    .stDataFrame *, 
+    .stTable * {
+        color: #FFFFFF !important;
     }
 
-    .pop-subtitle {
-        font-size: 0.95rem;
-        opacity: 0.85;
-        margin-bottom: 1.5rem;
+    /* Pagination text ("Showing page 1 of X") */
+    .st-emotion-cache-1y4p8pa, .st-emotion-cache-1m8g1qv, div[data-testid="stDataFrame"] p {
+        color: #FFFFFF !important;
     }
 
-    /* File uploader tweaks (class names may change with Streamlit versions) */
-    .st-emotion-cache-9j8j93, .st-emotion-cache-1vbkxwb {
-        border-radius: 12px !important;
+    /* Status text (like “Done!”, errors, warnings) */
+    .stAlert, .stToast, [data-testid="stNotification"], [data-testid="stNotificationContent"], .st-emotion-cache-1wdo8hj {
+        color: #FFFFFF !important;
     }
 
+    /* Buttons */
     .stButton > button, .stDownloadButton > button {
         background-color: #D7DF23 !important;
         color: #542D54 !important;
@@ -57,18 +64,41 @@ st.markdown(
         font-weight: 700 !important;
         font-family: "Montserrat", sans-serif !important;
     }
-
     .stButton > button:hover, .stDownloadButton > button:hover {
         background-color: #C8D51E !important;
         color: #542D54 !important;
     }
-
     .stButton > button:disabled,
     .stDownloadButton > button:disabled {
         background-color: #d0c0d3 !important;
         color: #777777 !important;
         opacity: 0.5 !important;
-        cursor: not-allowed !important;
+    }
+
+    /* Page padding */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 3rem !important;
+        max-width: 1100px !important;
+    }
+
+    /* Title and subtitle */
+    .pop-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #FFFFFF !important;
+    }
+    .pop-subtitle {
+        font-size: 0.95rem;
+        opacity: 0.85;
+        margin-bottom: 1.5rem;
+        color: #FFFFFF !important;
+    }
+
+    /* File uploader border rounding */
+    .st-emotion-cache-9j8j93, .st-emotion-cache-1vbkxwb {
+        border-radius: 12px !important;
     }
     </style>
     """,
