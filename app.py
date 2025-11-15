@@ -14,47 +14,36 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    /* GLOBAL BACKGROUND + FONT */
     html, body, .stApp, .stAppViewContainer, .main {
         background-color: #542D54 !important;
         color: #FFFFFF !important;
         font-family: "Montserrat", sans-serif !important;
     }
 
-    /* Remove menu + footer */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 
-    /* Remove Streamlit warning/toolbar */
     [data-testid="stNotification"], .stNotification, .stAlert, .stToolbar {
         display: none !important;
     }
 
-    /* Default text = WHITE */
-    * {
-        color: #FFFFFF !important;
-    }
+    * { color: #FFFFFF !important; }
 
-    /* ------------------------------------------------------------- */
-    /* FILE UPLOADER DROPZONE — MAKE TEXT + ICON PURE GAWK PURPLE     */
-    /* ------------------------------------------------------------- */
+    /* ------------------------------ */
+    /* DROPZONE TEXT = GAWK PURPLE    */
+    /* ------------------------------ */
 
-    /* Hard override for all text inside the DROPZONE ONLY */
     div[data-testid="stFileUploaderDropzone"] *,
-    div[data-testid="stFileUploaderDropzone"] div *,
+    div[data-testid="stFileUploaderDropzone"] label,
     div[data-testid="stFileUploaderDropzone"] p,
-    div[data-testid="stFileUploaderDropzone"] span,
-    div[data-testid="stFileUploaderDropzone"] label {
+    div[data-testid="stFileUploaderDropzone"] span {
         color: #542D54 !important;
-        opacity: 1 !important;
     }
 
-    /* Cloud icon */
     div[data-testid="stFileUploaderDropzone"] svg {
         fill: #542D54 !important;
     }
 
-    /* Browse Files button (white button → purple text) */
     div[data-testid="stFileUploader"] button {
         background-color: #FFFFFF !important;
         color: #542D54 !important;
@@ -63,26 +52,27 @@ st.markdown(
         font-family: "Montserrat", sans-serif !important;
     }
 
-    /* ------------------------------------------------------------- */
-    /* REMOVE FILE LIST BELOW UPLOADER COMPLETELY                    */
-    /* ------------------------------------------------------------- */
-    div[data-testid="stFileUploaderDropzone"] + div {
+    /* ------------------------------------------- */
+    /*  🔥 REMOVE FILE LIST BELOW UPLOADER (WORKS!) */
+    /* ------------------------------------------- */
+
+    div[data-testid="stFileUploaderUploadedFiles"] {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
+        overflow: hidden !important;
     }
 
-    /* ------------------------------------------------------------- */
-    /* TABLE — WIDER, NO WRAP, SMALLER FONT                          */
-    /* ------------------------------------------------------------- */
-    div[data-testid="stHorizontalBlock"],
-    div[data-testid="stVerticalBlock"],
-    div[data-testid="stDataFrame"] {
-        width: 100% !important;
-        min-width: 100% !important;
+    /* Extra fallback */
+    div[data-testid="stFileUploaderFile"] {
+        display: none !important;
     }
+
+    /* ------------------------------------------- */
+    /* TABLE STYLING                               */
+    /* ------------------------------------------- */
 
     div[data-testid="stDataFrame"] td,
     div[data-testid="stDataFrame"] th {
@@ -95,20 +85,14 @@ st.markdown(
         overflow-x: auto !important;
     }
 
-    /* Pagination text remains white */
-    .st-emotion-cache-1y4p8pa,
-    .st-emotion-cache-1m8g1qv,
-    div[data-testid="stDataFrame"] p {
-        color: #FFFFFF !important;
-    }
+    /* ------------------------------------------- */
+    /* BUTTONS                                     */
+    /* ------------------------------------------- */
 
-    /* ------------------------------------------------------------- */
-    /* BUTTONS (GREEN WITH PURPLE TEXT — BRAND SAFE)                 */
-    /* ------------------------------------------------------------- */
     .stButton > button,
     .stDownloadButton > button {
-        background-color: #D7DF23 !important;  /* Gawk Green */
-        color: #542D54 !important;             /* Gawk Purple text */
+        background-color: #D7DF23 !important;
+        color: #542D54 !important;
         border-radius: 999px !important;
         padding: 0.55rem 1.6rem !important;
         border: none !important;
@@ -118,47 +102,19 @@ st.markdown(
 
     .stButton > button:hover,
     .stDownloadButton > button:hover {
-        background-color: #C8D51E !important;  /* darker green */
+        background-color: #C8D51E !important;
         color: #542D54 !important;
     }
 
-    /* ------------------------------------------------------------- */
-    /* PAGE WIDTH + HEADINGS                                         */
-    /* ------------------------------------------------------------- */
     .block-container {
+        max-width: 1500px !important;
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
-        max-width: 1500px !important;
     }
 
-    .pop-title {
-        font-size: 1.4rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: #FFFFFF !important;
+    .pop-title, .pop-subtitle {
         text-align: center !important;
-    }
-
-    .pop-subtitle {
-        font-size: 0.95rem;
-        opacity: 0.85;
-        margin-bottom: 1.5rem;
         color: #FFFFFF !important;
-        text-align: center !important;
-    }
-
-    /* Fix top bar */
-    [data-testid="stHeader"],
-    [data-testid="stToolbar"],
-    header,
-    .st-emotion-cache-18ni7ap {
-        background-color: #542D54 !important;
-    }
-
-    /* Round uploader */
-    .st-emotion-cache-9j8j93,
-    .st-emotion-cache-1vbkxwb {
-        border-radius: 12px !important;
     }
 
     </style>
