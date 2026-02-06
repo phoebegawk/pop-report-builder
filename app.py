@@ -143,8 +143,8 @@ st.markdown(
         color: #542D54 !important;
     }}
 
-    /* RESET ALL BUTTON (PINK) */
-    div[data-testid="column"]:nth-of-type(2) .stButton > button {{
+    /* RESET ALL BUTTON (PINK) - STABLE HOOK */
+    .pop-reset-btn .stButton > button {{
         background-color: #C99CCA !important;
         color: #542D54 !important;
         border-radius: 999px !important;
@@ -153,7 +153,7 @@ st.markdown(
         border: none !important;
         font-family: "Montserrat", sans-serif !important;
     }}
-    div[data-testid="column"]:nth-of-type(2) .stButton > button:hover {{
+    .pop-reset-btn .stButton > button:hover {{
         background-color: #B889B8 !important;
         color: #542D54 !important;
     }}
@@ -163,6 +163,18 @@ st.markdown(
         max-width: 1500px !important;
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
+    }}
+
+    /* CENTER + LOCK BUTTON ROW WIDTH TO MATCH UPLOADER */
+    .pop-btn-row {{
+        max-width: 1180px !important;
+        margin: 0 auto !important;
+    }}
+
+    /* Ensure ONLY the button row respects the same centered width */
+    .pop-btn-row div[data-testid="stHorizontalBlock"] {{
+        max-width: 1180px !important;
+        margin: 0 auto !important;
     }}
     </style>
     """,
@@ -242,18 +254,24 @@ if file_rows:
     st.table(file_rows)
 
 # --------------------------------------------------------------
-# GENERATE PRESENTATION + RESET ALL (CENTERED)
+# GENERATE PRESENTATION + RESET ALL (MATCH CHECK MY SPECS)
 # --------------------------------------------------------------
-left_spacer, col1, gap, col2, right_spacer = st.columns([3, 2, 0.5, 2, 3])
+st.markdown('<div class="pop-btn-row">', unsafe_allow_html=True)
+
+left_spacer, col1, gap, col2, right_spacer = st.columns([4, 2, 0.15, 2, 4])
 
 with col1:
     generate_disabled = not valid_files
     generate = st.button("Generate PoP Report", disabled=generate_disabled)
 
 with col2:
+    st.markdown('<div class="pop-reset-btn">', unsafe_allow_html=True)
     reset = st.button("Reset All")
+    st.markdown("</div>", unsafe_allow_html=True)
     if reset:
         reset_all()
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 pptx_bytes = None
 pptx_name = None
