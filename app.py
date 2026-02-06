@@ -5,66 +5,98 @@ from pop_utils_web import parse_filename, generate_presentation_from_uploads
 st.set_page_config(page_title="PoP Report Builder", layout="wide")
 
 HEADER_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/main/assets/Header-PoPReportBuilder.png"
+BG_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/main/assets/PoPReportBuilder-BG.png"
 
 # Header
 st.image(HEADER_URL, width="stretch")
 
 st.markdown(
-    """
+    f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    /* GLOBAL BACKGROUND + FONT */
-    html, body, .stApp, .stAppViewContainer, .main {
-        background-color: #542D54 !important;
+    /* GLOBAL BACKGROUND IMAGE + FONT */
+    html, body, .stApp {{
+        height: 100%;
+    }}
+
+    .stApp {{
+        background-image: url("{BG_URL}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
         color: #FFFFFF !important;
         font-family: "Montserrat", sans-serif !important;
-    }
+    }}
 
-    #MainMenu, footer { visibility: hidden !important; }
-    [data-testid="stNotification"], .stAlert, .stToolbar { display: none !important; }
+    /* DARK OVERLAY FOR READABILITY */
+    .stApp::before {{
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(84, 45, 84, 0.70);
+        pointer-events: none;
+        z-index: 0;
+    }}
+
+    /* FORCE ALL STREAMLIT CONTENT ABOVE OVERLAY */
+    .stApp > div {{
+        position: relative;
+        z-index: 1;
+    }}
+
+    /* MAKE STREAMLIT CONTAINERS TRANSPARENT SO BACKGROUND SHOWS */
+    .stAppViewContainer,
+    .main,
+    .block-container {{
+        background: transparent !important;
+    }}
+
+    #MainMenu, footer {{ visibility: hidden !important; }}
+    [data-testid="stNotification"], .stAlert, .stToolbar {{ display: none !important; }}
 
     /* HEADER BAR */
-    header[data-testid="stHeader"], header[data-testid="stHeader"] * {
-        background-color: #542D54 !important;
+    header[data-testid="stHeader"], header[data-testid="stHeader"] * {{
+        background: transparent !important;
         color: #FFFFFF !important;
-    }
+    }}
 
     /* HIDE FILE UPLOADER LABEL */
-    div[data-testid="stFileUploader"] label {
+    div[data-testid="stFileUploader"] label {{
         display: none !important;
         visibility: hidden !important;
-    }
+    }}
 
     /* FILE UPLOADER DROPZONE — PURPLE TEXT */
-    div[data-testid="stFileUploaderDropzone"] * {
+    div[data-testid="stFileUploaderDropzone"] * {{
         color: #542D54 !important;
         fill: #542D54 !important;
-    }
-    div[data-testid="stFileUploaderDropzone"] svg {
+    }}
+    div[data-testid="stFileUploaderDropzone"] svg {{
         fill: #542D54 !important;
-    }
+    }}
 
     /* Browse Files button */
-    div[data-testid="stFileUploader"] button {
+    div[data-testid="stFileUploader"] button {{
         background-color: #FFFFFF !important;
         color: #542D54 !important;
         font-weight: 700 !important;
         border-radius: 8px !important;
-    }
+    }}
 
     /* REMOVE FILE LIST / CHIPS */
     div[data-testid="stFileUploaderUploadedFiles"],
     div[data-testid="stFileUploaderFile"],
     ul[role="listbox"],
-    li[role="option"] {
+    li[role="option"] {{
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
         overflow: hidden !important;
-    }
+    }}
 
     /* REMOVE ALL PAGINATION (ALL STREAMLIT VERSIONS) */
     div[data-testid="stDataFramePaginator"],
@@ -76,26 +108,26 @@ st.markdown(
     button[aria-label="Next"],
     button[aria-label="Previous"],
     div[data-testid="stDataFrame"] > div:nth-child(1):has(span),
-    div[data-testid="stDataFrame"] span:contains("Showing page") {
+    div[data-testid="stDataFrame"] span:contains("Showing page") {{
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
         overflow: hidden !important;
         margin: 0 !important;
         padding: 0 !important;
-    }
+    }}
 
     /* TABLE TEXT WHITE */
     div[data-testid="stDataFrame"] *,
     div[data-testid="stTable"] *,
     div[data-testid="stDataFrameScrollable"] *,
     div[data-testid="stDataFrameContainer"] *,
-    table, table * {
+    table, table * {{
         color: #FFFFFF !important;
-    }
+    }}
 
     /* BUTTONS (Gawk Green + Purple) */
-    .stButton > button, .stDownloadButton > button {
+    .stButton > button, .stDownloadButton > button {{
         background-color: #D7DF23 !important;
         color: #542D54 !important;
         border-radius: 999px !important;
@@ -103,12 +135,22 @@ st.markdown(
         font-weight: 700 !important;
         border: none !important;
         font-family: "Montserrat", sans-serif !important;
-    }
-    .stButton > button:hover, .stDownloadButton > button:hover {
+    }}
+    .stButton > button:hover, .stDownloadButton > button:hover {{
         background-color: #C8D51E !important;
         color: #542D54 !important;
-    }
+    }}
 
+    /* PAGE WIDTH */
+    .block-container {{
+        max-width: 1500px !important;
+        padding-top: 1rem !important;
+        padding-bottom: 3rem !important;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
     /* PAGE WIDTH */
     .block-container {
         max-width: 1500px !important;
