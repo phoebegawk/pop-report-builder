@@ -169,16 +169,28 @@ st.markdown(
         padding-bottom: 3rem !important;
     }}
 
-    /* CENTER + LOCK BUTTON ROW WIDTH TO MATCH UPLOADER */
+    /*
+      BUTTON ROW LAYOUT (proper fix):
+      - keep the two buttons in their own centered row
+      - avoid column stretching that causes mismatched button sizes
+    */
     .pop-btn-row {{
         max-width: 1180px !important;
         margin: 0 auto !important;
+        display: flex !important;
+        justify-content: center !important;
+        gap: 28px !important;
     }}
 
-    /* Ensure ONLY the button row respects the same centered width */
-    .pop-btn-row div[data-testid="stHorizontalBlock"] {{
-        max-width: 1180px !important;
-        margin: 0 auto !important;
+    /* Make the two Streamlit button containers behave like inline blocks */
+    .pop-btn-row .stButton {{
+        display: inline-block !important;
+    }}
+
+    /* Keep labels from wrapping (prevents height mismatch) */
+    .pop-btn-row .stButton > button {{
+        white-space: nowrap !important;
+        line-height: 1.2 !important;
     }}
     </style>
     """,
@@ -262,18 +274,15 @@ if file_rows:
 # --------------------------------------------------------------
 st.markdown('<div class="pop-btn-row">', unsafe_allow_html=True)
 
-left_spacer, col1, gap, col2, right_spacer = st.columns([4, 2, 0.15, 2, 4])
+generate_disabled = not valid_files
+generate = st.button("Generate Report", disabled=generate_disabled)
 
-with col1:
-    generate_disabled = not valid_files
-    generate = st.button("Generate PoP Report", disabled=generate_disabled)
+st.markdown('<div class="pop-reset-btn">', unsafe_allow_html=True)
+reset = st.button("Reset All")
+st.markdown("</div>", unsafe_allow_html=True)
 
-with col2:
-    st.markdown('<div class="pop-reset-btn">', unsafe_allow_html=True)
-    reset = st.button("Reset All")
-    st.markdown("</div>", unsafe_allow_html=True)
-    if reset:
-        reset_all()
+if reset:
+    reset_all()
 
 st.markdown("</div>", unsafe_allow_html=True)
 
