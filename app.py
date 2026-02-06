@@ -239,9 +239,9 @@ if file_rows:
     st.table(file_rows)
 
 # --------------------------------------------------------------
-# GENERATE PRESENTATION + RESET ALL (side-by-side)
+# GENERATE PRESENTATION + RESET ALL
 # --------------------------------------------------------------
-col1, col2 = st.columns([1, 1])
+left_spacer, col1, gap, col2, right_spacer = st.columns([3, 2, 0.5, 2, 3])
 
 with col1:
     generate_disabled = not valid_files
