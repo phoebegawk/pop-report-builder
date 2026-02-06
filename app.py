@@ -14,7 +14,12 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    /* GLOBAL BACKGROUND IMAGE + FONT */
+    /* FORCE MONTSERRAT EVERYWHERE */
+    html, body, .stApp, .stApp * {{
+        font-family: "Montserrat", sans-serif !important;
+    }}
+
+    /* GLOBAL BACKGROUND IMAGE */
     html, body, .stApp {{
         height: 100%;
     }}
@@ -26,23 +31,6 @@ st.markdown(
         background-repeat: no-repeat;
         background-attachment: fixed;
         color: #FFFFFF !important;
-        font-family: "Montserrat", sans-serif !important;
-    }}
-
-    /* DARK OVERLAY FOR READABILITY */
-    .stApp::before {{
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: rgba(84, 45, 84, 0.70);
-        pointer-events: none;
-        z-index: 0;
-    }}
-
-    /* FORCE ALL STREAMLIT CONTENT ABOVE OVERLAY */
-    .stApp > div {{
-        position: relative;
-        z-index: 1;
     }}
 
     /* MAKE STREAMLIT CONTAINERS TRANSPARENT SO BACKGROUND SHOWS */
@@ -59,6 +47,21 @@ st.markdown(
     header[data-testid="stHeader"], header[data-testid="stHeader"] * {{
         background: transparent !important;
         color: #FFFFFF !important;
+    }}
+
+    /* CENTER THE TITLE LINE */
+    .pop-title {{
+        text-align: center !important;
+        width: 100%;
+        margin: 0 auto;
+        font-weight: 700;
+    }}
+
+    /* CENTER + SIZE THE UPLOADER LIKE "CHECK MY SPECS" */
+    div[data-testid="stFileUploader"] {{
+        width: 100% !important;
+        max-width: 1180px !important;
+        margin: 0 auto !important;
     }}
 
     /* HIDE FILE UPLOADER LABEL */
@@ -173,6 +176,7 @@ def reset_all():
     st.session_state.clear()
     st.rerun()
 
+
 # --------------------------------------------------------------
 # TITLE
 # --------------------------------------------------------------
@@ -199,7 +203,6 @@ valid_files = []
 file_rows = []
 
 if uploaded_files:
-
     temp_rows = []
 
     for f in uploaded_files:
@@ -239,7 +242,7 @@ if file_rows:
     st.table(file_rows)
 
 # --------------------------------------------------------------
-# GENERATE PRESENTATION + RESET ALL
+# GENERATE PRESENTATION + RESET ALL (CENTERED)
 # --------------------------------------------------------------
 left_spacer, col1, gap, col2, right_spacer = st.columns([3, 2, 0.5, 2, 3])
 
