@@ -1,7 +1,11 @@
 import streamlit as st
 from pop_utils_web import parse_filename, generate_presentation_from_uploads
 
-st.set_page_config(page_title="PoP Report Builder", layout="wide")
+st.set_page_config(
+    page_title="PoP Report Builder",
+    layout="wide",
+    page_icon="assets/favicon.png",
+)
 
 HEADER_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/main/assets/Header-PoPReportBuilder.png"
 BG_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/main/assets/PoPReportBuilder-BG.png"
