@@ -1,5 +1,4 @@
 import streamlit as st
-
 from pop_utils_web import parse_filename, generate_presentation_from_uploads
 
 st.set_page_config(page_title="PoP Report Builder", layout="wide")
@@ -141,6 +140,21 @@ st.markdown(
         color: #542D54 !important;
     }}
 
+    /* RESET ALL BUTTON (PINK) */
+    div[data-testid="column"]:nth-of-type(2) .stButton > button {{
+        background-color: #C99CCA !important;
+        color: #542D54 !important;
+        border-radius: 999px !important;
+        padding: 0.55rem 1.6rem !important;
+        font-weight: 700 !important;
+        border: none !important;
+        font-family: "Montserrat", sans-serif !important;
+    }}
+    div[data-testid="column"]:nth-of-type(2) .stButton > button:hover {{
+        background-color: #B889B8 !important;
+        color: #542D54 !important;
+    }}
+
     /* PAGE WIDTH */
     .block-container {{
         max-width: 1500px !important;
@@ -151,16 +165,13 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-    /* PAGE WIDTH */
-    .block-container {
-        max-width: 1500px !important;
-        padding-top: 1rem !important;
-        padding-bottom: 3rem !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+
+# --------------------------------------------------------------
+# RESET HANDLER (works any time)
+# --------------------------------------------------------------
+def reset_all():
+    st.session_state.clear()
+    st.rerun()
 
 # --------------------------------------------------------------
 # TITLE
@@ -176,7 +187,7 @@ st.markdown("<div style='height:30px;'></div>", unsafe_allow_html=True)
 # FILE UPLOADER (label required but hidden in CSS)
 # --------------------------------------------------------------
 uploaded_files = st.file_uploader(
-    "upload",   # required but hidden by CSS
+    "upload",  # required but hidden by CSS
     type=["jpg", "jpeg", "png"],
     accept_multiple_files=True,
 )
@@ -228,10 +239,18 @@ if file_rows:
     st.table(file_rows)
 
 # --------------------------------------------------------------
-# GENERATE PRESENTATION
+# GENERATE PRESENTATION + RESET ALL (side-by-side)
 # --------------------------------------------------------------
-generate_disabled = not valid_files
-generate = st.button("Generate PoP Report", disabled=generate_disabled)
+col1, col2 = st.columns([1, 1])
+
+with col1:
+    generate_disabled = not valid_files
+    generate = st.button("Generate PoP Report", disabled=generate_disabled)
+
+with col2:
+    reset = st.button("Reset All")
+    if reset:
+        reset_all()
 
 pptx_bytes = None
 pptx_name = None
