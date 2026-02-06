@@ -104,25 +104,6 @@ st.markdown(
         overflow: hidden !important;
     }}
 
-    /* REMOVE ALL PAGINATION (ALL STREAMLIT VERSIONS) */
-    div[data-testid="stDataFramePaginator"],
-    div[data-testid="stPaginator"],
-    div[data-testid="stPagination"],
-    div[aria-label="Pagination"],
-    div:has(> button[aria-label="Next"]),
-    div:has(> button[aria-label="Previous"]),
-    button[aria-label="Next"],
-    button[aria-label="Previous"],
-    div[data-testid="stDataFrame"] > div:nth-child(1):has(span),
-    div[data-testid="stDataFrame"] span:contains("Showing page") {{
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        overflow: hidden !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }}
-
     /* TABLE TEXT WHITE */
     div[data-testid="stDataFrame"] *,
     div[data-testid="stTable"] *,
@@ -132,32 +113,33 @@ st.markdown(
         color: #FFFFFF !important;
     }}
 
-    /* BUTTONS (Gawk Green + Purple) */
+    /* BUTTONS BASE (shape + typography) */
     .stButton > button, .stDownloadButton > button {{
-        background-color: #D7DF23 !important;
-        color: #542D54 !important;
         border-radius: 999px !important;
         padding: 0.55rem 1.6rem !important;
         font-weight: 700 !important;
         border: none !important;
         font-family: "Montserrat", sans-serif !important;
+        white-space: nowrap !important;   /* prevents label wrapping */
+        line-height: 1.2 !important;
     }}
-    .stButton > button:hover, .stDownloadButton > button:hover {{
+
+    /* PRIMARY BUTTONS = Gawk Green */
+    .stButton > button[kind="primary"], .stDownloadButton > button[kind="primary"] {{
+        background-color: #D7DF23 !important;
+        color: #542D54 !important;
+    }}
+    .stButton > button[kind="primary"]:hover, .stDownloadButton > button[kind="primary"]:hover {{
         background-color: #C8D51E !important;
         color: #542D54 !important;
     }}
 
-    /* RESET ALL BUTTON (PINK) - STABLE HOOK */
-    .pop-reset-btn .stButton > button {{
+    /* SECONDARY BUTTONS = PINK (Reset) */
+    .stButton > button[kind="secondary"] {{
         background-color: #C99CCA !important;
         color: #542D54 !important;
-        border-radius: 999px !important;
-        padding: 0.55rem 1.6rem !important;
-        font-weight: 700 !important;
-        border: none !important;
-        font-family: "Montserrat", sans-serif !important;
     }}
-    .pop-reset-btn .stButton > button:hover {{
+    .stButton > button[kind="secondary"]:hover {{
         background-color: #B889B8 !important;
         color: #542D54 !important;
     }}
@@ -167,30 +149,6 @@ st.markdown(
         max-width: 1500px !important;
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
-    }}
-
-    /*
-      BUTTON ROW LAYOUT (proper fix):
-      - keep the two buttons in their own centered row
-      - avoid column stretching that causes mismatched button sizes
-    */
-    .pop-btn-row {{
-        max-width: 1180px !important;
-        margin: 0 auto !important;
-        display: flex !important;
-        justify-content: center !important;
-        gap: 28px !important;
-    }}
-
-    /* Make the two Streamlit button containers behave like inline blocks */
-    .pop-btn-row .stButton {{
-        display: inline-block !important;
-    }}
-
-    /* Keep labels from wrapping (prevents height mismatch) */
-    .pop-btn-row .stButton > button {{
-        white-space: nowrap !important;
-        line-height: 1.2 !important;
     }}
     </style>
     """,
@@ -203,7 +161,6 @@ st.markdown(
 def reset_all():
     st.session_state.clear()
     st.rerun()
-
 
 # --------------------------------------------------------------
 # TITLE
@@ -270,21 +227,30 @@ if file_rows:
     st.table(file_rows)
 
 # --------------------------------------------------------------
-# GENERATE PRESENTATION + RESET ALL (MATCH CHECK MY SPECS)
+# BUTTON ROW (properly centered + equal sizing)
 # --------------------------------------------------------------
-st.markdown('<div class="pop-btn-row">', unsafe_allow_html=True)
-
 generate_disabled = not valid_files
-generate = st.button("Generate Report", disabled=generate_disabled)
 
-st.markdown('<div class="pop-reset-btn">', unsafe_allow_html=True)
-reset = st.button("Reset All")
-st.markdown("</div>", unsafe_allow_html=True)
+left_spacer, col1, gap, col2, right_spacer = st.columns([3, 2, 0.25, 2, 3], gap="large")
 
-if reset:
-    reset_all()
+with col1:
+    generate = st.button(
+        "Generate Report",
+        disabled=generate_disabled,
+        type="primary",
+        use_container_width=True,
+        key="generate_report_btn",
+    )
 
-st.markdown("</div>", unsafe_allow_html=True)
+with col2:
+    reset = st.button(
+        "Reset All",
+        type="secondary",
+        use_container_width=True,
+        key="reset_all_btn",
+    )
+    if reset:
+        reset_all()
 
 pptx_bytes = None
 pptx_name = None
@@ -305,4 +271,6 @@ if pptx_bytes is not None:
         data=pptx_bytes,
         file_name=pptx_name,
         mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        type="primary",
+        use_container_width=False,
     )
