@@ -13,22 +13,17 @@ BG_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/main/a
 # ---------------------------
 # Session State Init
 # ---------------------------
-if "uploader_key" not in st.session_state:
-    st.session_state["uploader_key"] = 0
-if "reset_nonce" not in st.session_state:
-    st.session_state["reset_nonce"] = 0
-if "pptx_bytes" not in st.session_state:
-    st.session_state["pptx_bytes"] = None
-if "pptx_name" not in st.session_state:
-    st.session_state["pptx_name"] = None
+st.session_state.setdefault("uploader_key", 0)
+st.session_state.setdefault("reset_nonce", 0)
+st.session_state.setdefault("pptx_bytes", None)
+st.session_state.setdefault("pptx_name", None)
 
-# One flag for ANY full-screen overlay usage (parsing OR generating)
-if "overlay_active" not in st.session_state:
-    st.session_state["overlay_active"] = False
-if "overlay_message" not in st.session_state:
-    st.session_state["overlay_message"] = "Uploading…"
-if "overlay_submessage" not in st.session_state:
-    st.session_state["overlay_submessage"] = "Processing files and building the table."
+# overlay state
+st.session_state.setdefault("overlay_active", False)
+st.session_state.setdefault("overlay_message", "Uploading…")
+st.session_state.setdefault("overlay_submessage", "Processing files and building the table.")
+# two-step parse trigger so overlay actually renders
+st.session_state.setdefault("pending_parse", False)
 
 # ---------------------------
 # Callbacks
@@ -38,235 +33,249 @@ def reset_all():
     st.session_state["pptx_name"] = None
 
     st.session_state["overlay_active"] = False
-    st.session_state["overlay_message"] = "Uploading…"
-    st.session_state["overlay_submessage"] = "Processing files and building the table."
+    st.session_state["pending_parse"] = False
 
     st.session_state["uploader_key"] += 1
     st.session_state["reset_nonce"] += 1
-
     st.rerun()
 
 
 def on_upload_change():
-    # Fires AFTER browser finishes uploading and Streamlit receives the files.
+    # Fires after browser upload completes (Streamlit receives files)
+    st.session_state["pptx_bytes"] = None
+    st.session_state["pptx_name"] = None
+
+    # Trigger overlay + two-step parse
     st.session_state["overlay_active"] = True
     st.session_state["overlay_message"] = "Uploading…"
     st.session_state["overlay_submessage"] = "Processing files and building the table."
-    st.session_state["pptx_bytes"] = None
-    st.session_state["pptx_name"] = None
+    st.session_state["pending_parse"] = True
 
 
 # ---------------------------
 # Header + Styles
 # ---------------------------
-st.image(HEADER_URL, width="stretch")
+st.image(HEADER_URL, use_container_width=True)
 
 st.markdown(
     f"""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    /* FORCE MONTSERRAT */
-    html, body, .stApp, .stApp * {{
-        font-family: "Montserrat", sans-serif !important;
-    }}
+html, body, .stApp, .stApp * {{
+  font-family: "Montserrat", sans-serif !important;
+}}
 
-    html, body, .stApp {{ height: 100%; }}
+html, body, .stApp {{
+  height: 100%;
+}}
 
-    .stApp {{
-        background-image: url("{BG_URL}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        color: #FFFFFF !important;
-    }}
+.stApp {{
+  background-image: url("{BG_URL}");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #FFFFFF !important;
+}}
 
-    .stAppViewContainer, .main, .block-container {{
-        background: transparent !important;
-    }}
+.stAppViewContainer, .main, .block-container {{
+  background: transparent !important;
+}}
 
-    #MainMenu, footer {{ visibility: hidden !important; }}
-    [data-testid="stNotification"], .stAlert, .stToolbar {{ display: none !important; }}
+#MainMenu, footer {{
+  visibility: hidden !important;
+}}
 
-    header[data-testid="stHeader"], header[data-testid="stHeader"] * {{
-        background: transparent !important;
-        color: #FFFFFF !important;
-    }}
+[data-testid="stNotification"], .stAlert, .stToolbar {{
+  display: none !important;
+}}
 
-    .pop-title {{
-        text-align: center !important;
-        width: 100%;
-        margin: 0 auto;
-        font-weight: 700;
-        color: #FFFFFF !important;
-    }}
+header[data-testid="stHeader"], header[data-testid="stHeader"] * {{
+  background: transparent !important;
+  color: #FFFFFF !important;
+}}
 
-    /* Uploader sizing */
-    div[data-testid="stFileUploader"] {{
-        width: 100% !important;
-        max-width: 1180px !important;
-        margin: 0 auto !important;
-    }}
+.pop-title {{
+  text-align: center !important;
+  width: 100%;
+  margin: 0 auto;
+  font-weight: 700;
+  color: #FFFFFF !important;
+}}
 
-    /* Hide uploader label */
-    div[data-testid="stFileUploader"] label {{
-        display: none !important;
-        visibility: hidden !important;
-    }}
+/* Pagination footer text (Showing page X of Y) + arrows */
+div[data-testid="stDataFrame"] div[role="status"],
+div[data-testid="stDataFrame"] div[role="status"] *,
+div[data-testid="stDataFrame"] span,
+div[data-testid="stDataFrame"] small {{
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+}}
 
-    /* Dropzone text + icon -> purple */
-    div[data-testid="stFileUploaderDropzone"] * {{
-        color: #542D54 !important;
-        fill: #542D54 !important;
-    }}
-    div[data-testid="stFileUploaderDropzone"] svg {{
-        fill: #542D54 !important;
-    }}
+div[data-testid="stDataFrame"] button,
+div[data-testid="stDataFrame"] button * {{
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+}}
 
-    /* Also force the small uploader subtext (file limit etc) to purple */
-    div[data-testid="stFileUploaderDropzone"] small {{
-        color: #542D54 !important;
-        opacity: 1 !important;
-    }}
+/* Uploader width */
+div[data-testid="stFileUploader"] {{
+  width: 100% !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+}}
 
-    /* Browse files button */
-    div[data-testid="stFileUploader"] button {{
-        background-color: #FFFFFF !important;
-        color: #542D54 !important;
-        font-weight: 700 !important;
-        border-radius: 8px !important;
-        border: 1px solid rgba(84,45,84,0.35) !important;
-    }}
+div[data-testid="stFileUploader"] label {{
+  display: none !important;
+  visibility: hidden !important;
+}}
 
-    /* Remove file list / chips */
-    div[data-testid="stFileUploaderUploadedFiles"],
-    div[data-testid="stFileUploaderFile"],
-    ul[role="listbox"],
-    li[role="option"] {{
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-    }}
+/* Dropzone text */
+div[data-testid="stFileUploaderDropzone"] * {{
+  color: #542D54 !important;
+  fill: #542D54 !important;
+  opacity: 1 !important;
+}}
+div[data-testid="stFileUploaderDropzone"] svg {{
+  fill: #542D54 !important;
+}}
+div[data-testid="stFileUploaderDropzone"] small {{
+  color: #542D54 !important;
+  opacity: 1 !important;
+}}
 
-    /* Table text white */
-    div[data-testid="stDataFrame"] *,
-    div[data-testid="stTable"] *,
-    div[data-testid="stDataFrameScrollable"] *,
-    div[data-testid="stDataFrameContainer"] *,
-    table, table * {{
-        color: #FFFFFF !important;
-    }}
+/* Browse button */
+div[data-testid="stFileUploader"] button {{
+  background-color: #FFFFFF !important;
+  color: #542D54 !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+}}
 
-    /* Buttons */
-    .stButton > button, .stDownloadButton > button {{
-        border-radius: 999px !important;
-        padding: 0.55rem 1.6rem !important;
-        font-weight: 700 !important;
-        border: none !important;
-        white-space: nowrap !important;
-        line-height: 1.2 !important;
-        opacity: 1 !important; /* stop grey fade */
-    }}
+/* Remove file chips/list */
+div[data-testid="stFileUploaderUploadedFiles"],
+div[data-testid="stFileUploaderFile"],
+ul[role="listbox"],
+li[role="option"] {{
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}}
 
-    /* Primary = Gawk Green */
-    .stButton > button[kind="primary"], .stDownloadButton > button[kind="primary"] {{
-        background-color: #D7DF23 !important;
-        color: #542D54 !important;
-    }}
-    .stButton > button[kind="primary"]:hover, .stDownloadButton > button[kind="primary"]:hover {{
-        background-color: #C8D51E !important;
-        color: #542D54 !important;
-    }}
+/* Tables */
+div[data-testid="stDataFrame"] *,
+div[data-testid="stTable"] *,
+div[data-testid="stDataFrameScrollable"] *,
+div[data-testid="stDataFrameContainer"] *,
+table, table * {{
+  color: #FFFFFF !important;
+}}
 
-    /* Secondary = Pink */
-    .stButton > button[kind="secondary"] {{
-        background-color: #C99CCA !important;
-        color: #542D54 !important;
-    }}
-    .stButton > button[kind="secondary"]:hover {{
-        background-color: #B889B8 !important;
-        color: #542D54 !important;
-    }}
+/* Buttons */
+.stButton > button, .stDownloadButton > button {{
+  border-radius: 999px !important;
+  padding: 0.55rem 1.6rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+  opacity: 1 !important;
+}}
 
-    /* Disabled buttons: keep readable (no grey text) */
-    .stButton > button:disabled,
-    .stDownloadButton > button:disabled {{
-        opacity: 0.55 !important;
-        color: #542D54 !important;
-        cursor: not-allowed !important;
-    }}
+.stButton > button[kind="primary"], .stDownloadButton > button[kind="primary"] {{
+  background-color: #D7DF23 !important;
+  color: #542D54 !important;
+}}
+.stButton > button[kind="primary"]:hover, .stDownloadButton > button[kind="primary"]:hover {{
+  background-color: #C8D51E !important;
+  color: #542D54 !important;
+}}
 
-    /* Page width */
-    .block-container {{
-        max-width: 1500px !important;
-        padding-top: 1rem !important;
-        padding-bottom: 3rem !important;
-    }}
+.stButton > button[kind="secondary"] {{
+  background-color: #C99CCA !important;
+  color: #542D54 !important;
+}}
+.stButton > button[kind="secondary"]:hover {{
+  background-color: #B889B8 !important;
+  color: #542D54 !important;
+}}
 
-    /* ---------------------------
-       FULLSCREEN OVERLAY (Uploading)
-       --------------------------- */
-    .overlay {{
-        position: fixed;
-        inset: 0;
-        background: rgba(30, 10, 30, 0.55);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        z-index: 999999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }}
+/* Disabled: keep readable (not greyed out) */
+.stButton > button:disabled,
+.stDownloadButton > button:disabled {{
+  opacity: 0.55 !important;
+  color: #542D54 !important;
+  cursor: not-allowed !important;
+}}
 
-    .overlay-card {{
-        width: min(520px, 90vw);
-        background: rgba(255,255,255,0.14);
-        border: 1px solid rgba(255,255,255,0.22);
-        border-radius: 16px;
-        padding: 24px 26px;
-        text-align: center;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-    }}
+.block-container {{
+  max-width: 1500px !important;
+  padding-top: 1rem !important;
+  padding-bottom: 3rem !important;
+}}
 
-    .overlay-title {{
-        font-size: 22px;
-        font-weight: 800;
-        color: #FFFFFF;
-        margin-top: 12px;
-        margin-bottom: 6px;
-    }}
+/* Fullscreen overlay */
+.overlay {{
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 10, 30, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}}
 
-    .overlay-sub {{
-        font-size: 14px;
-        font-weight: 600;
-        color: rgba(255,255,255,0.85);
-        margin: 0;
-    }}
+.overlay-card {{
+  width: min(520px, 90vw);
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 16px;
+  padding: 24px 26px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+}}
 
-    .overlay-spinner {{
-        width: 54px;
-        height: 54px;
-        margin: 0 auto;
-        border-radius: 50%;
-        border: 6px solid rgba(255,255,255,0.22);
-        border-top-color: #D7DF23; /* Gawk Green */
-        animation: spin 1s linear infinite;
-    }}
+.overlay-title {{
+  font-size: 22px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-top: 12px;
+  margin-bottom: 6px;
+}}
 
-    @keyframes spin {{
-        to {{ transform: rotate(360deg); }}
-    }}
-    </style>
-    """,
+.overlay-sub {{
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  margin: 0;
+}}
+
+.overlay-spinner {{
+  width: 54px;
+  height: 54px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 6px solid rgba(255,255,255,0.22);
+  border-top-color: #D7DF23;
+  animation: spin 1s linear infinite;
+}}
+
+@keyframes spin {{
+  to {{ transform: rotate(360deg); }}
+}}
+</style>
+""",
     unsafe_allow_html=True,
 )
 
 # ---------------------------
-# Overlay Renderer (top of page)
+# Overlay renderer
 # ---------------------------
 overlay_placeholder = st.empty()
 
@@ -299,10 +308,10 @@ st.markdown(
 st.markdown("<div style='height:30px;'></div>", unsafe_allow_html=True)
 
 # ---------------------------
-# Uploader (keyed so Reset clears it)
+# Uploader
 # ---------------------------
 uploaded_files = st.file_uploader(
-    "upload",  # hidden by CSS
+    "upload",
     type=["jpg", "jpeg", "png"],
     accept_multiple_files=True,
     key=f"uploader_{st.session_state['uploader_key']}",
@@ -310,22 +319,30 @@ uploaded_files = st.file_uploader(
 )
 
 # ---------------------------
-# Parse + Sort (table build)
+# IMPORTANT: two-step overlay render
+# If upload happened, we STOP once so the browser shows the overlay.
+# Then the next run continues and builds the table.
+# ---------------------------
+if st.session_state.get("pending_parse") and uploaded_files:
+    st.session_state["pending_parse"] = False
+    render_overlay()
+    st.stop()
+
+# ---------------------------
+# Parse + Sort
 # ---------------------------
 valid_files = []
 file_rows = []
 
 if uploaded_files:
-    # If user uploaded but callback didn’t fire for some reason, still protect UX:
-    if not st.session_state.get("overlay_active"):
-        st.session_state["overlay_active"] = True
-        st.session_state["overlay_message"] = "Uploading…"
-        st.session_state["overlay_submessage"] = "Processing files and building the table."
-        render_overlay()
+    # show overlay while parsing
+    st.session_state["overlay_active"] = True
+    st.session_state["overlay_message"] = "Uploading…"
+    st.session_state["overlay_submessage"] = "Processing files and building the table."
+    render_overlay()
 
     try:
         temp_rows = []
-
         for f in uploaded_files:
             info = parse_filename(f)
 
@@ -356,7 +373,6 @@ if uploaded_files:
         file_rows = temp_rows
 
     finally:
-        # ALWAYS clear overlay, even if parse_filename throws.
         st.session_state["overlay_active"] = False
         render_overlay()
 
@@ -367,7 +383,7 @@ if file_rows:
     st.table(file_rows)
 
 # ---------------------------
-# Buttons Row
+# Buttons
 # ---------------------------
 generate_disabled = not valid_files
 nonce = st.session_state["reset_nonce"]
@@ -382,6 +398,14 @@ with col1:
         use_container_width=True,
         key=f"generate_report_btn_{nonce}",
     )
+    # Explain WHY it's disabled (so it doesn’t feel broken)
+    if uploaded_files and generate_disabled:
+        st.markdown(
+            "<div style='text-align:center; font-weight:600; color:#FFFFFF; margin-top:10px;'>"
+            "Generate is disabled because none of the filenames match the required convention."
+            "</div>",
+            unsafe_allow_html=True,
+        )
 
 with col2:
     st.button(
@@ -415,7 +439,7 @@ if generate and valid_files:
         render_overlay()
 
 # ---------------------------
-# Download Button
+# Download
 # ---------------------------
 if st.session_state["pptx_bytes"] is not None:
     st.download_button(
