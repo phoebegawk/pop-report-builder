@@ -21,29 +21,40 @@ if "pptx_bytes" not in st.session_state:
     st.session_state["pptx_bytes"] = None
 if "pptx_name" not in st.session_state:
     st.session_state["pptx_name"] = None
-if "uploading_flag" not in st.session_state:
-    st.session_state["uploading_flag"] = False
+
+# One flag for ANY full-screen overlay usage (parsing OR generating)
+if "overlay_active" not in st.session_state:
+    st.session_state["overlay_active"] = False
+if "overlay_message" not in st.session_state:
+    st.session_state["overlay_message"] = "Uploading…"
+if "overlay_submessage" not in st.session_state:
+    st.session_state["overlay_submessage"] = "Processing files and building the table."
 
 # ---------------------------
 # Callbacks
 # ---------------------------
 def reset_all():
-    # clear generated output
     st.session_state["pptx_bytes"] = None
     st.session_state["pptx_name"] = None
-    st.session_state["uploading_flag"] = False
 
-    # force reset widgets (uploader + buttons)
+    st.session_state["overlay_active"] = False
+    st.session_state["overlay_message"] = "Uploading…"
+    st.session_state["overlay_submessage"] = "Processing files and building the table."
+
     st.session_state["uploader_key"] += 1
     st.session_state["reset_nonce"] += 1
 
     st.rerun()
 
+
 def on_upload_change():
-    # Fires after upload completes (browser-side), then app reruns.
-    st.session_state["uploading_flag"] = True
+    # Fires AFTER browser finishes uploading and Streamlit receives the files.
+    st.session_state["overlay_active"] = True
+    st.session_state["overlay_message"] = "Uploading…"
+    st.session_state["overlay_submessage"] = "Processing files and building the table."
     st.session_state["pptx_bytes"] = None
     st.session_state["pptx_name"] = None
+
 
 # ---------------------------
 # Header + Styles
@@ -55,6 +66,7 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
+    /* FORCE MONTSERRAT */
     html, body, .stApp, .stApp * {{
         font-family: "Montserrat", sans-serif !important;
     }}
@@ -87,19 +99,23 @@ st.markdown(
         width: 100%;
         margin: 0 auto;
         font-weight: 700;
+        color: #FFFFFF !important;
     }}
 
+    /* Uploader sizing */
     div[data-testid="stFileUploader"] {{
         width: 100% !important;
         max-width: 1180px !important;
         margin: 0 auto !important;
     }}
 
+    /* Hide uploader label */
     div[data-testid="stFileUploader"] label {{
         display: none !important;
         visibility: hidden !important;
     }}
 
+    /* Dropzone text + icon -> purple */
     div[data-testid="stFileUploaderDropzone"] * {{
         color: #542D54 !important;
         fill: #542D54 !important;
@@ -108,13 +124,22 @@ st.markdown(
         fill: #542D54 !important;
     }}
 
+    /* Also force the small uploader subtext (file limit etc) to purple */
+    div[data-testid="stFileUploaderDropzone"] small {{
+        color: #542D54 !important;
+        opacity: 1 !important;
+    }}
+
+    /* Browse files button */
     div[data-testid="stFileUploader"] button {{
         background-color: #FFFFFF !important;
         color: #542D54 !important;
         font-weight: 700 !important;
         border-radius: 8px !important;
+        border: 1px solid rgba(84,45,84,0.35) !important;
     }}
 
+    /* Remove file list / chips */
     div[data-testid="stFileUploaderUploadedFiles"],
     div[data-testid="stFileUploaderFile"],
     ul[role="listbox"],
@@ -127,6 +152,7 @@ st.markdown(
         overflow: hidden !important;
     }}
 
+    /* Table text white */
     div[data-testid="stDataFrame"] *,
     div[data-testid="stTable"] *,
     div[data-testid="stDataFrameScrollable"] *,
@@ -135,6 +161,7 @@ st.markdown(
         color: #FFFFFF !important;
     }}
 
+    /* Buttons */
     .stButton > button, .stDownloadButton > button {{
         border-radius: 999px !important;
         padding: 0.55rem 1.6rem !important;
@@ -142,8 +169,10 @@ st.markdown(
         border: none !important;
         white-space: nowrap !important;
         line-height: 1.2 !important;
+        opacity: 1 !important; /* stop grey fade */
     }}
 
+    /* Primary = Gawk Green */
     .stButton > button[kind="primary"], .stDownloadButton > button[kind="primary"] {{
         background-color: #D7DF23 !important;
         color: #542D54 !important;
@@ -153,6 +182,7 @@ st.markdown(
         color: #542D54 !important;
     }}
 
+    /* Secondary = Pink */
     .stButton > button[kind="secondary"] {{
         background-color: #C99CCA !important;
         color: #542D54 !important;
@@ -162,60 +192,69 @@ st.markdown(
         color: #542D54 !important;
     }}
 
+    /* Disabled buttons: keep readable (no grey text) */
+    .stButton > button:disabled,
+    .stDownloadButton > button:disabled {{
+        opacity: 0.55 !important;
+        color: #542D54 !important;
+        cursor: not-allowed !important;
+    }}
+
+    /* Page width */
     .block-container {{
         max-width: 1500px !important;
         padding-top: 1rem !important;
         padding-bottom: 3rem !important;
     }}
 
-    /* =========================
-       FULL-SCREEN UPLOADING OVERLAY
-       Shows while we are parsing/building table/report.
-       ========================= */
-    .upload-overlay {{
+    /* ---------------------------
+       FULLSCREEN OVERLAY (Uploading)
+       --------------------------- */
+    .overlay {{
         position: fixed;
         inset: 0;
+        background: rgba(30, 10, 30, 0.55);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
         z-index: 999999;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(84, 45, 84, 0.65);
-        backdrop-filter: blur(4px);
     }}
 
-    .upload-card {{
-        width: min(520px, 92vw);
-        background: rgba(255, 255, 255, 0.12);
-        border: 1px solid rgba(255, 255, 255, 0.30);
-        border-radius: 18px;
-        padding: 26px 22px;
+    .overlay-card {{
+        width: min(520px, 90vw);
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.22);
+        border-radius: 16px;
+        padding: 24px 26px;
         text-align: center;
-        color: #FFFFFF;
-        box-shadow: 0 18px 55px rgba(0,0,0,0.35);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.35);
     }}
 
-    .upload-title {{
-        font-weight: 800;
+    .overlay-title {{
         font-size: 22px;
-        margin: 0 0 6px 0;
-        letter-spacing: 0.5px;
+        font-weight: 800;
+        color: #FFFFFF;
+        margin-top: 12px;
+        margin-bottom: 6px;
     }}
 
-    .upload-sub {{
+    .overlay-sub {{
+        font-size: 14px;
         font-weight: 600;
-        font-size: 15px;
-        margin: 0 0 16px 0;
-        opacity: 0.95;
+        color: rgba(255,255,255,0.85);
+        margin: 0;
     }}
 
-    .loader {{
-        width: 68px;
-        height: 68px;
+    .overlay-spinner {{
+        width: 54px;
+        height: 54px;
+        margin: 0 auto;
         border-radius: 50%;
-        border: 7px solid rgba(255,255,255,0.25);
-        border-top-color: #D7DF23;
-        margin: 0 auto 10px auto;
-        animation: spin 0.9s linear infinite;
+        border: 6px solid rgba(255,255,255,0.22);
+        border-top-color: #D7DF23; /* Gawk Green */
+        animation: spin 1s linear infinite;
     }}
 
     @keyframes spin {{
@@ -225,6 +264,30 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+# ---------------------------
+# Overlay Renderer (top of page)
+# ---------------------------
+overlay_placeholder = st.empty()
+
+def render_overlay():
+    if st.session_state.get("overlay_active"):
+        overlay_placeholder.markdown(
+            f"""
+            <div class="overlay">
+              <div class="overlay-card">
+                <div class="overlay-spinner"></div>
+                <div class="overlay-title">{st.session_state.get("overlay_message","Uploading…")}</div>
+                <p class="overlay-sub">{st.session_state.get("overlay_submessage","Processing…")}</p>
+              </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        overlay_placeholder.empty()
+
+render_overlay()
 
 # ---------------------------
 # Title
@@ -247,58 +310,55 @@ uploaded_files = st.file_uploader(
 )
 
 # ---------------------------
-# Parse + Sort (with full-screen overlay)
+# Parse + Sort (table build)
 # ---------------------------
 valid_files = []
 file_rows = []
 
 if uploaded_files:
-    # Show overlay immediately when we start doing server-side work
-    st.markdown(
-        """
-        <div class="upload-overlay">
-            <div class="upload-card">
-                <div class="loader"></div>
-                <div class="upload-title">Uploading…</div>
-                <div class="upload-sub">Processing files and building the table.</div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    # If user uploaded but callback didn’t fire for some reason, still protect UX:
+    if not st.session_state.get("overlay_active"):
+        st.session_state["overlay_active"] = True
+        st.session_state["overlay_message"] = "Uploading…"
+        st.session_state["overlay_submessage"] = "Processing files and building the table."
+        render_overlay()
 
-    temp_rows = []
-    for f in uploaded_files:
-        info = parse_filename(f)
+    try:
+        temp_rows = []
 
-        if info is None:
-            status = "❌ Invalid name"
-            parsed_date = None
-        else:
-            status = "✅"
-            valid_files.append(f)
-            parsed_date = info["live_date"]
+        for f in uploaded_files:
+            info = parse_filename(f)
 
-        temp_rows.append(
-            {
-                "File": f.name,
-                "Site": info["site_name"] if info else "-",
-                "Client": info["client"] if info else "-",
-                "Campaign": info["campaign"] if info else "-",
-                "Live Date": info["live_date_display"] if info else "-",
-                "Status": status,
-                "_sort_date": parsed_date,
-            }
-        )
+            if info is None:
+                status = "❌ Invalid name"
+                parsed_date = None
+            else:
+                status = "✅"
+                valid_files.append(f)
+                parsed_date = info["live_date"]
 
-    temp_rows.sort(key=lambda x: (x["_sort_date"] is None, x["_sort_date"]))
-    for r in temp_rows:
-        r.pop("_sort_date", None)
+            temp_rows.append(
+                {
+                    "File": f.name,
+                    "Site": info["site_name"] if info else "-",
+                    "Client": info["client"] if info else "-",
+                    "Campaign": info["campaign"] if info else "-",
+                    "Live Date": info["live_date_display"] if info else "-",
+                    "Status": status,
+                    "_sort_date": parsed_date,
+                }
+            )
 
-    file_rows = temp_rows
+        temp_rows.sort(key=lambda x: (x["_sort_date"] is None, x["_sort_date"]))
+        for r in temp_rows:
+            r.pop("_sort_date", None)
 
-    # done processing
-    st.session_state["uploading_flag"] = False
+        file_rows = temp_rows
+
+    finally:
+        # ALWAYS clear overlay, even if parse_filename throws.
+        st.session_state["overlay_active"] = False
+        render_overlay()
 
 # ---------------------------
 # Show Table
@@ -333,21 +393,13 @@ with col2:
     )
 
 # ---------------------------
-# Generation (with full-screen overlay)
+# Generation
 # ---------------------------
 if generate and valid_files:
-    st.markdown(
-        """
-        <div class="upload-overlay">
-            <div class="upload-card">
-                <div class="loader"></div>
-                <div class="upload-title">Building…</div>
-                <div class="upload-sub">Generating your PoP Report now.</div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.session_state["overlay_active"] = True
+    st.session_state["overlay_message"] = "Building report…"
+    st.session_state["overlay_submessage"] = "Generating your PowerPoint."
+    render_overlay()
 
     try:
         pptx_bytes, pptx_name = generate_presentation_from_uploads(valid_files)
@@ -358,6 +410,9 @@ if generate and valid_files:
         st.session_state["pptx_bytes"] = None
         st.session_state["pptx_name"] = None
         st.error(f"Something went wrong while building the report: {e}")
+    finally:
+        st.session_state["overlay_active"] = False
+        render_overlay()
 
 # ---------------------------
 # Download Button
