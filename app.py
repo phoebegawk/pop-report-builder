@@ -324,9 +324,13 @@ uploaded_files = st.file_uploader(
 # Then the next run continues and builds the table.
 # ---------------------------
 if st.session_state.get("pending_parse") and uploaded_files:
+    # 1) Render overlay on this run
     st.session_state["pending_parse"] = False
+    st.session_state["overlay_active"] = True
     render_overlay()
-    st.stop()
+
+    # 2) Immediately rerun so the NEXT run can do the parsing
+    st.rerun()
 
 # ---------------------------
 # Parse + Sort
@@ -338,7 +342,7 @@ if uploaded_files:
     # show overlay while parsing
     st.session_state["overlay_active"] = True
     st.session_state["overlay_message"] = "Uploading…"
-    st.session_state["overlay_submessage"] = "Processing files and building the table."
+    st.session_state["overlay_submessage"] = "Building the table."
     render_overlay()
 
     try:
