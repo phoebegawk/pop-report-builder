@@ -10,7 +10,47 @@ st.set_page_config(
 HEADER_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/main/assets/Header-PoPReportBuilder.png"
 BG_URL = "https://raw.githubusercontent.com/phoebegawk/pop-report-builder/main/assets/PoPReportBuilder-BG.png"
 
-# Header
+# ---------------------------
+# Session State Init
+# ---------------------------
+if "uploader_key" not in st.session_state:
+    st.session_state["uploader_key"] = 0
+if "reset_nonce" not in st.session_state:
+    st.session_state["reset_nonce"] = 0
+if "pptx_bytes" not in st.session_state:
+    st.session_state["pptx_bytes"] = None
+if "pptx_name" not in st.session_state:
+    st.session_state["pptx_name"] = None
+if "uploading_flag" not in st.session_state:
+    st.session_state["uploading_flag"] = False
+
+
+# ---------------------------
+# Callbacks
+# ---------------------------
+def reset_all():
+    # clear generated output
+    st.session_state["pptx_bytes"] = None
+    st.session_state["pptx_name"] = None
+
+    # force reset widgets (uploader + buttons)
+    st.session_state["uploader_key"] += 1
+    st.session_state["reset_nonce"] += 1
+
+    st.rerun()
+
+
+def on_upload_change():
+    # This fires when user selects files (after upload completes),
+    # but it’s still useful to show immediate “processing” feedback.
+    st.session_state["uploading_flag"] = True
+    st.session_state["pptx_bytes"] = None
+    st.session_state["pptx_name"] = None
+
+
+# ---------------------------
+# Header + Styles
+# ---------------------------
 st.image(HEADER_URL, width="stretch")
 
 st.markdown(
@@ -18,15 +58,11 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    /* FORCE MONTSERRAT EVERYWHERE */
     html, body, .stApp, .stApp * {{
         font-family: "Montserrat", sans-serif !important;
     }}
 
-    /* GLOBAL BACKGROUND IMAGE */
-    html, body, .stApp {{
-        height: 100%;
-    }}
+    html, body, .stApp {{ height: 100%; }}
 
     .stApp {{
         background-image: url("{BG_URL}");
@@ -37,23 +73,18 @@ st.markdown(
         color: #FFFFFF !important;
     }}
 
-    /* MAKE STREAMLIT CONTAINERS TRANSPARENT SO BACKGROUND SHOWS */
-    .stAppViewContainer,
-    .main,
-    .block-container {{
+    .stAppViewContainer, .main, .block-container {{
         background: transparent !important;
     }}
 
     #MainMenu, footer {{ visibility: hidden !important; }}
     [data-testid="stNotification"], .stAlert, .stToolbar {{ display: none !important; }}
 
-    /* HEADER BAR */
     header[data-testid="stHeader"], header[data-testid="stHeader"] * {{
         background: transparent !important;
         color: #FFFFFF !important;
     }}
 
-    /* CENTER THE TITLE LINE */
     .pop-title {{
         text-align: center !important;
         width: 100%;
@@ -61,20 +92,17 @@ st.markdown(
         font-weight: 700;
     }}
 
-    /* CENTER + SIZE THE UPLOADER LIKE "CHECK MY SPECS" */
     div[data-testid="stFileUploader"] {{
         width: 100% !important;
         max-width: 1180px !important;
         margin: 0 auto !important;
     }}
 
-    /* HIDE FILE UPLOADER LABEL */
     div[data-testid="stFileUploader"] label {{
         display: none !important;
         visibility: hidden !important;
     }}
 
-    /* FILE UPLOADER DROPZONE — PURPLE TEXT */
     div[data-testid="stFileUploaderDropzone"] * {{
         color: #542D54 !important;
         fill: #542D54 !important;
@@ -83,7 +111,6 @@ st.markdown(
         fill: #542D54 !important;
     }}
 
-    /* Browse Files button */
     div[data-testid="stFileUploader"] button {{
         background-color: #FFFFFF !important;
         color: #542D54 !important;
@@ -91,7 +118,6 @@ st.markdown(
         border-radius: 8px !important;
     }}
 
-    /* REMOVE FILE LIST / CHIPS */
     div[data-testid="stFileUploaderUploadedFiles"],
     div[data-testid="stFileUploaderFile"],
     ul[role="listbox"],
@@ -104,7 +130,6 @@ st.markdown(
         overflow: hidden !important;
     }}
 
-    /* TABLE TEXT WHITE */
     div[data-testid="stDataFrame"] *,
     div[data-testid="stTable"] *,
     div[data-testid="stDataFrameScrollable"] *,
@@ -113,18 +138,15 @@ st.markdown(
         color: #FFFFFF !important;
     }}
 
-    /* BUTTONS BASE (shape + typography) */
     .stButton > button, .stDownloadButton > button {{
         border-radius: 999px !important;
         padding: 0.55rem 1.6rem !important;
         font-weight: 700 !important;
         border: none !important;
-        font-family: "Montserrat", sans-serif !important;
-        white-space: nowrap !important;   /* prevents label wrapping */
+        white-space: nowrap !important;
         line-height: 1.2 !important;
     }}
 
-    /* PRIMARY BUTTONS = Gawk Green */
     .stButton > button[kind="primary"], .stDownloadButton > button[kind="primary"] {{
         background-color: #D7DF23 !important;
         color: #542D54 !important;
@@ -134,7 +156,6 @@ st.markdown(
         color: #542D54 !important;
     }}
 
-    /* SECONDARY BUTTONS = PINK (Reset) */
     .stButton > button[kind="secondary"] {{
         background-color: #C99CCA !important;
         color: #542D54 !important;
@@ -144,7 +165,6 @@ st.markdown(
         color: #542D54 !important;
     }}
 
-    /* PAGE WIDTH */
     .block-container {{
         max-width: 1500px !important;
         padding-top: 1rem !important;
@@ -155,81 +175,86 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --------------------------------------------------------------
-# RESET HANDLER (works any time)
-# --------------------------------------------------------------
-def reset_all():
-    st.session_state.clear()
-    st.rerun()
-
-# --------------------------------------------------------------
-# TITLE
-# --------------------------------------------------------------
+# ---------------------------
+# Title
+# ---------------------------
 st.markdown(
     '<div class="pop-title"><b>Image File Naming Convention ➡️ Site Name - Site Code - Client - Campaign - DDMMYY - Type.ext</b></div>',
     unsafe_allow_html=True,
 )
-
 st.markdown("<div style='height:30px;'></div>", unsafe_allow_html=True)
 
-# --------------------------------------------------------------
-# FILE UPLOADER (label required but hidden in CSS)
-# --------------------------------------------------------------
+# ---------------------------
+# Uploader (keyed so Reset clears it)
+# ---------------------------
 uploaded_files = st.file_uploader(
-    "upload",  # required but hidden by CSS
+    "upload",  # hidden by CSS
     type=["jpg", "jpeg", "png"],
     accept_multiple_files=True,
+    key=f"uploader_{st.session_state['uploader_key']}",
+    on_change=on_upload_change,
 )
 
-# --------------------------------------------------------------
-# PARSE + SORT
-# --------------------------------------------------------------
+# ---------------------------
+# Uploading / Processing feedback panel
+# ---------------------------
+# Note: We can’t show UI *during browser upload*, but we can show it immediately after.
+if st.session_state["uploading_flag"] and uploaded_files:
+    st.info("Uploading complete — processing files now…")
+
+# ---------------------------
+# Parse + Sort
+# ---------------------------
 valid_files = []
 file_rows = []
 
 if uploaded_files:
-    temp_rows = []
+    with st.spinner("Processing uploads…"):
+        temp_rows = []
 
-    for f in uploaded_files:
-        info = parse_filename(f)
+        for f in uploaded_files:
+            info = parse_filename(f)
 
-        if info is None:
-            status = "❌ Invalid name"
-            parsed_date = None
-        else:
-            status = "✅"
-            valid_files.append(f)
-            parsed_date = info["live_date"]
+            if info is None:
+                status = "❌ Invalid name"
+                parsed_date = None
+            else:
+                status = "✅"
+                valid_files.append(f)
+                parsed_date = info["live_date"]
 
-        temp_rows.append(
-            {
-                "File": f.name,
-                "Site": info["site_name"] if info else "-",
-                "Client": info["client"] if info else "-",
-                "Campaign": info["campaign"] if info else "-",
-                "Live Date": info["live_date_display"] if info else "-",
-                "Status": status,
-                "_sort_date": parsed_date,
-            }
-        )
+            temp_rows.append(
+                {
+                    "File": f.name,
+                    "Site": info["site_name"] if info else "-",
+                    "Client": info["client"] if info else "-",
+                    "Campaign": info["campaign"] if info else "-",
+                    "Live Date": info["live_date_display"] if info else "-",
+                    "Status": status,
+                    "_sort_date": parsed_date,
+                }
+            )
 
-    temp_rows.sort(key=lambda x: (x["_sort_date"] is None, x["_sort_date"]))
+        temp_rows.sort(key=lambda x: (x["_sort_date"] is None, x["_sort_date"]))
+        for r in temp_rows:
+            r.pop("_sort_date", None)
 
-    for r in temp_rows:
-        r.pop("_sort_date", None)
+        file_rows = temp_rows
 
-    file_rows = temp_rows
+    # done processing
+    st.session_state["uploading_flag"] = False
 
-# --------------------------------------------------------------
-# SHOW TABLE
-# --------------------------------------------------------------
+# ---------------------------
+# Show Table
+# ---------------------------
 if file_rows:
     st.table(file_rows)
 
-# --------------------------------------------------------------
-# BUTTON ROW (properly centered + equal sizing)
-# --------------------------------------------------------------
+# ---------------------------
+# Buttons Row
+# ---------------------------
 generate_disabled = not valid_files
+nonce = st.session_state["reset_nonce"]
 
 left_spacer, col1, gap, col2, right_spacer = st.columns([3, 2, 0.25, 2, 3], gap="large")
 
@@ -239,38 +264,44 @@ with col1:
         disabled=generate_disabled,
         type="primary",
         use_container_width=True,
-        key="generate_report_btn",
+        key=f"generate_report_btn_{nonce}",
     )
 
 with col2:
-    reset = st.button(
+    # ✅ This is the important change: callback guarantees it runs
+    st.button(
         "Reset All",
         type="secondary",
         use_container_width=True,
-        key="reset_all_btn",
+        key=f"reset_all_btn_{nonce}",
+        on_click=reset_all,
     )
-    if reset:
-        reset_all()
 
-pptx_bytes = None
-pptx_name = None
-
+# ---------------------------
+# Generation (with clear user feedback)
+# ---------------------------
 if generate and valid_files:
-    try:
-        pptx_bytes, pptx_name = generate_presentation_from_uploads(valid_files)
-        st.success("PoP Report generated successfully.")
-    except Exception as e:
-        st.error(f"Something went wrong while building the report: {e}")
+    with st.spinner("Building PoP report…"):
+        try:
+            pptx_bytes, pptx_name = generate_presentation_from_uploads(valid_files)
+            st.session_state["pptx_bytes"] = pptx_bytes
+            st.session_state["pptx_name"] = pptx_name
+            st.success("PoP Report generated successfully.")
+        except Exception as e:
+            st.session_state["pptx_bytes"] = None
+            st.session_state["pptx_name"] = None
+            st.error(f"Something went wrong while building the report: {e}")
 
-# --------------------------------------------------------------
-# DOWNLOAD BUTTON
-# --------------------------------------------------------------
-if pptx_bytes is not None:
+# ---------------------------
+# Download Button
+# ---------------------------
+if st.session_state["pptx_bytes"] is not None:
     st.download_button(
         "Download PoP Report",
-        data=pptx_bytes,
-        file_name=pptx_name,
+        data=st.session_state["pptx_bytes"],
+        file_name=st.session_state["pptx_name"] or "PoP_Report.pptx",
         mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
         type="primary",
         use_container_width=False,
+        key=f"download_btn_{nonce}",
     )
